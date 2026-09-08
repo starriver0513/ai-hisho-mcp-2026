@@ -1,1613 +1,892 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>【保存版】Claude Code / Codexで作る24時間働くAI秘書｜MCP連携 完全手順</title>
-  <meta name="description" content="Claude Codeを使ってプロダクトローンチの制作物を作るための保存版資料。企画、セミナー、特典、LP、配信文、投稿運用までを実践手順とプロンプトで整理。">
-  <style>
-    :root {
-      --ink: #0b1020;
-      --ink-soft: #22304a;
-      --muted: #5c6880;
-      --blue: #0866ff;
-      --blue-dark: #073b9a;
-      --blue-soft: #eef5ff;
-      --cyan: #28d3ff;
-      --sky: #d9eaff;
-      --line: #d8e4f6;
-      --bg: #f6f9ff;
-      --white: #ffffff;
-      --card: #ffffff;
-      --shadow: 0 22px 60px rgba(8, 32, 80, 0.12);
-      --shadow-soft: 0 12px 34px rgba(8, 32, 80, 0.08);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --max: 1040px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at 20% 0%, rgba(8, 102, 255, 0.08), transparent 28%),
-        linear-gradient(180deg, #f9fbff 0%, #eef5ff 100%);
-      line-height: 1.9;
-      letter-spacing: 0;
-      overflow-x: hidden;
-    }
-
-    a {
-      color: inherit;
-    }
-
-    .content-card a,
-    .note a,
-    .mini-card a,
-    .check-list a {
-      color: var(--blue);
-      font-weight: 800;
-      text-decoration-thickness: 2px;
-      text-underline-offset: 3px;
-    }
-
-    .page {
-      width: min(var(--max), calc(100vw - 36px));
-      margin: 0 auto;
-      padding: 36px 0 80px;
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 24px;
-      color: #fff;
-      padding: clamp(34px, 5vw, 70px);
-      background:
-        linear-gradient(135deg, rgba(4, 12, 34, 0.95) 0%, rgba(4, 32, 91, 0.96) 48%, rgba(4, 86, 201, 0.94) 100%),
-        linear-gradient(45deg, rgba(255,255,255,0.08) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.08) 75%, transparent 75%);
-      box-shadow: var(--shadow);
-    }
-
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(135deg, rgba(255,255,255,0.06) 1px, transparent 1px),
-        linear-gradient(45deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 72px 72px;
-      opacity: 0.55;
-      pointer-events: none;
-    }
-
-    .hero-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 18px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      color: #fff;
-      font-weight: 800;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(30px, 6vw, 62px);
-      line-height: 1.2;
-      font-weight: 900;
-      letter-spacing: 0;
-    }
-
-    .hero-accent {
-      color: #72d9ff;
-      display: inline-block;
-    }
-
-    .hero-copy {
-      width: min(760px, 100%);
-      margin: 22px 0 0;
-      color: rgba(255,255,255,0.9);
-      font-size: clamp(15px, 2vw, 18px);
-      font-weight: 600;
-      overflow-wrap: anywhere;
-    }
-
-    .hero-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 26px;
-    }
-
-    .hero-meta span {
-      border: 1px solid rgba(255,255,255,0.22);
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.92);
-      padding: 7px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .notice {
-      margin: 18px 0 0;
-      color: rgba(255,255,255,0.72);
-      font-size: 12px;
-      overflow-wrap: anywhere;
-    }
-
-    .intro {
-      margin-top: 30px;
-      background: var(--white);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      border-top: 5px solid var(--blue);
-      padding: clamp(24px, 4vw, 38px);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .intro h2,
-    .toc h2,
-    .content-card h3 {
-      margin-top: 0;
-    }
-
-    .lead {
-      color: var(--ink-soft);
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .note {
-      background: var(--blue-soft);
-      border: 1px solid var(--sky);
-      border-radius: var(--radius-sm);
-      padding: 18px 20px;
-      color: var(--ink-soft);
-      font-size: 14px;
-    }
-
-    .toc {
-      margin-top: 30px;
-      background: var(--white);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: clamp(24px, 4vw, 38px);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .toc h2 {
-      font-size: 24px;
-      line-height: 1.35;
-    }
-
-    .toc-list {
-      list-style: none;
-      padding: 0;
-      margin: 20px 0 0;
-      display: grid;
-      gap: 12px;
-    }
-
-    .toc-list a {
-      display: grid;
-      grid-template-columns: 42px 1fr;
-      align-items: center;
-      gap: 14px;
-      text-decoration: none;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid transparent;
-      transition: 0.2s ease;
-      color: var(--ink);
-      font-weight: 700;
-      background: #fbfdff;
-    }
-
-    .toc-list a:hover {
-      border-color: var(--sky);
-      background: var(--blue-soft);
-      transform: translateX(4px);
-    }
-
-    .toc-number {
-      width: 42px;
-      height: 42px;
-      display: inline-grid;
-      place-items: center;
-      border-radius: 12px;
-      color: #fff;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
-    }
-
-    .section-header {
-      margin: 52px 0 22px;
-      border-radius: 20px;
-      color: #fff;
-      padding: clamp(24px, 4vw, 36px);
-      background:
-        linear-gradient(135deg, #07101f 0%, #092b68 54%, #064dc7 100%);
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .section-header::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(135deg, rgba(255,255,255,0.06) 1px, transparent 1px),
-        linear-gradient(45deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 70px 70px;
-      pointer-events: none;
-    }
-
-    .section-kicker {
-      position: relative;
-      display: inline-flex;
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      border-radius: 999px;
-      padding: 5px 16px;
-      font-size: 13px;
-      font-weight: 900;
-      margin-bottom: 14px;
-    }
-
-    .section-title {
-      position: relative;
-      margin: 0;
-      color: #fff;
-      font-size: clamp(22px, 4vw, 34px);
-      line-height: 1.35;
-      font-weight: 800;
-    }
-
-    .content-card {
-      background: var(--white);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      border-top: 5px solid var(--blue);
-      padding: clamp(24px, 4vw, 36px);
-      margin-bottom: 22px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .content-card h3 {
-      border-left: 5px solid var(--blue);
-      padding-left: 14px;
-      color: var(--ink);
-      font-size: 22px;
-      line-height: 1.45;
-      font-weight: 800;
-    }
-
-    .content-card h4 {
-      color: var(--blue-dark);
-      font-size: 18px;
-      line-height: 1.45;
-      margin: 28px 0 10px;
-      font-weight: 800;
-    }
-
-    .content-card p {
-      margin: 0 0 14px;
-      color: var(--ink-soft);
-      font-weight: 500;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-      margin: 18px 0;
-    }
-
-    .grid.three {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .mini-card,
-    .tool-card,
-    .step-card {
-      background: #fbfdff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    .mini-card strong,
-    .tool-card strong,
-    .step-card strong {
-      display: block;
-      font-size: 16px;
-      color: var(--ink);
-      margin-bottom: 6px;
-      font-weight: 800;
-    }
-
-    .mini-card p,
-    .tool-card p,
-    .step-card p {
-      font-size: 14px;
-      margin-bottom: 0;
-      color: var(--muted);
-    }
-
-    .stat-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin: 22px 0;
-    }
-
-    .stat {
-      border-radius: 16px;
-      background: linear-gradient(135deg, #061a3c, #075ed7);
-      color: #fff;
-      padding: 20px;
-    }
-
-    .stat small {
-      display: block;
-      color: rgba(255,255,255,0.74);
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .stat b {
-      display: block;
-      font-size: clamp(22px, 3vw, 32px);
-      line-height: 1.2;
-      font-weight: 900;
-    }
-
-    .flow {
-      display: grid;
-      gap: 12px;
-      margin: 20px 0;
-    }
-
-    .flow-item {
-      display: grid;
-      grid-template-columns: 54px 1fr;
-      gap: 16px;
-      align-items: start;
-      background: #fbfdff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
-    }
-
-    .flow-index {
-      width: 54px;
-      height: 54px;
-      display: grid;
-      place-items: center;
-      color: #fff;
-      font-size: 18px;
-      font-weight: 900;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
-    }
-
-    .flow-item h4 {
-      margin: 0 0 4px;
-      color: var(--ink);
-      font-weight: 800;
-    }
-
-    .flow-item p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .check-list,
-    .plain-list {
-      margin: 16px 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 10px;
-    }
-
-    .check-list li,
-    .plain-list li {
-      position: relative;
-      padding: 12px 14px 12px 40px;
-      border-radius: 12px;
-      background: #fbfdff;
-      border: 1px solid var(--line);
-      color: var(--ink-soft);
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .check-list li::before {
-      content: "✓";
-      position: absolute;
-      left: 14px;
-      top: 11px;
-      color: var(--blue);
-      font-weight: 900;
-    }
-
-    .plain-list li::before {
-      content: "";
-      position: absolute;
-      left: 17px;
-      top: 22px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--blue);
-    }
-
-    .quote {
-      margin: 20px 0;
-      border-left: 5px solid var(--blue);
-      background: var(--blue-soft);
-      border-radius: 0 14px 14px 0;
-      padding: 18px 22px;
-      color: var(--ink-soft);
-      font-weight: 800;
-    }
-
-    .prompt-card {
-      position: relative;
-      border-radius: 16px;
-      background: #07101f;
-      color: #eaf3ff;
-      border: 1px solid rgba(255,255,255,0.08);
-      overflow: hidden;
-      margin: 18px 0 26px;
-      box-shadow: 0 16px 42px rgba(3, 16, 42, 0.24);
-    }
-
-    .prompt-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      align-items: center;
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-    }
-
-    .prompt-title {
-      font-size: 13px;
-      font-weight: 900;
-      color: #fff;
-    }
-
-    .copy-btn {
-      border: 0;
-      color: #07101f;
-      background: #72d9ff;
-      border-radius: 8px;
-      padding: 7px 10px;
-      font-size: 12px;
-      font-weight: 900;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .copy-btn:hover {
-      background: #fff;
-    }
-
-    pre {
-      margin: 0;
-      padding: 18px;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-      line-height: 1.8;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      font-size: 13px;
-    }
-
-    code {
-      font-family: inherit;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      margin: 18px 0;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 760px;
-      background: #fff;
-    }
-
-    th {
-      background: #071a3d;
-      color: #fff;
-      text-align: left;
-      padding: 12px 14px;
-      font-size: 13px;
-    }
-
-    td {
-      border-top: 1px solid var(--line);
-      padding: 12px 14px;
-      color: var(--ink-soft);
-      font-size: 13px;
-      vertical-align: top;
-    }
-
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin: 18px 0;
-    }
-
-    .tool-card a {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 12px;
-      color: var(--blue);
-      text-decoration: none;
-      font-weight: 900;
-      font-size: 13px;
-    }
-
-    .tool-card a:hover {
-      text-decoration: underline;
-    }
-
-    .cta {
-      margin-top: 52px;
-      border-radius: 22px;
-      padding: clamp(28px, 5vw, 48px);
-      background:
-        linear-gradient(135deg, #06101f, #062b70 55%, #0866ff);
-      color: #fff;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-
-    .cta h2 {
-      margin: 0 0 12px;
-      font-size: clamp(24px, 4vw, 36px);
-      line-height: 1.35;
-    }
-
-    .cta p {
-      margin: 0 auto;
-      width: min(760px, 100%);
-      color: rgba(255,255,255,0.84);
-      font-weight: 600;
-    }
-
-    .sources {
-      margin-top: 28px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .sources a {
-      color: var(--blue);
-      font-weight: 800;
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
-      background: var(--blue-soft);
-      color: var(--blue-dark);
-      font-size: 12px;
-      font-weight: 900;
-      margin-right: 6px;
-    }
-
-    .mobile-only-break {
-      display: none;
-    }
-
-    .scroll-progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      z-index: 1000;
-      pointer-events: none;
-    }
-
-    .scroll-progress span {
-      display: block;
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--cyan), var(--blue));
-      box-shadow: 0 0 22px rgba(40, 211, 255, 0.45);
-      transition: width 0.12s linear;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at var(--mx, 50%) var(--my, 45%), rgba(114, 217, 255, 0.2), transparent 34%);
-      opacity: 0;
-      transition: opacity 0.25s ease;
-      pointer-events: none;
-    }
-
-    .hero:hover::after {
-      opacity: 1;
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: opacity, transform;
-    }
-
-    .reveal.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .toc-list a.is-active {
-      border-color: var(--sky);
-      background: var(--blue-soft);
-      box-shadow: 0 10px 26px rgba(8, 102, 255, 0.12);
-    }
-
-    .mini-card,
-    .flow-item,
-    .prompt-card {
-      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-    }
-
-    @media (hover: hover) {
-      .mini-card:hover,
-      .flow-item:hover {
-        transform: translateY(-3px);
-        border-color: var(--sky);
-        box-shadow: 0 14px 30px rgba(8, 32, 80, 0.1);
-      }
-    }
-
-    .copy-btn.copied {
-      background: #fff;
-      color: #07101f;
-      animation: copyPulse 0.48s ease;
-    }
-
-    .back-to-top {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      width: 46px;
-      height: 46px;
-      border: 0;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
-      color: #fff;
-      font-size: 20px;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 16px 34px rgba(8, 32, 80, 0.22);
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(12px);
-      transition: opacity 0.22s ease, transform 0.22s ease;
-      z-index: 999;
-    }
-
-    .back-to-top.is-visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .motion-ready .badge,
-    .motion-ready h1,
-    .motion-ready .hero-copy,
-    .motion-ready .hero-meta span {
-      opacity: 0;
-      transform: translateY(18px);
-      animation: heroRise 0.78s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    .motion-ready h1 {
-      animation-delay: 0.08s;
-    }
-
-    .motion-ready .hero-copy {
-      animation-delay: 0.18s;
-    }
-
-    .motion-ready .hero-meta span {
-      animation-delay: calc(0.28s + (var(--i, 0) * 0.08s));
-    }
-
-    @keyframes heroRise {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .section-header::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(110deg, transparent 0%, transparent 34%, rgba(255,255,255,0.16) 50%, transparent 66%, transparent 100%);
-      transform: translateX(-130%);
-      pointer-events: none;
-    }
-
-    .section-header.is-visible::after {
-      animation: headerSweep 1.1s ease 0.1s both;
-    }
-
-    @keyframes headerSweep {
-      to {
-        transform: translateX(130%);
-      }
-    }
-
-    .section-rail {
-      position: fixed;
-      top: 50%;
-      right: 18px;
-      z-index: 998;
-      display: grid;
-      gap: 9px;
-      transform: translateY(-50%);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .section-rail.is-visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .section-rail a {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: #aac4ec;
-      border: 2px solid #fff;
-      box-shadow: 0 4px 12px rgba(8, 32, 80, 0.18);
-      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .section-rail a.is-active {
-      background: var(--blue);
-      transform: scale(1.55);
-      box-shadow: 0 0 0 5px rgba(8, 102, 255, 0.14), 0 8px 18px rgba(8, 32, 80, 0.2);
-    }
-
-    .tilt-card {
-      position: relative;
-      overflow: hidden;
-      transform-style: preserve-3d;
-      transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
-    }
-
-    .tilt-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, transparent 20%, rgba(255,255,255,0.38) 50%, transparent 80%);
-      opacity: var(--glare, 0);
-      transform: translateX(var(--gx, -120%));
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      pointer-events: none;
-    }
-
-    .prompt-card.tilt-card::after {
-      background: linear-gradient(135deg, transparent 18%, rgba(114, 217, 255, 0.16) 50%, transparent 82%);
-    }
-
-    @keyframes copyPulse {
-      0% {
-        transform: scale(1);
-      }
-      45% {
-        transform: scale(1.06);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
-      }
-
-      .scroll-progress span,
-      .hero::after,
-      .reveal,
-      .mini-card,
-      .flow-item,
-      .prompt-card,
-      .back-to-top,
-      .section-rail,
-      .section-rail a,
-      .tilt-card,
-      .tilt-card::after,
-      .motion-ready .badge,
-      .motion-ready h1,
-      .motion-ready .hero-copy,
-      .motion-ready .hero-meta span,
-      .section-header::after,
-      .copy-btn.copied {
-        animation: none;
-        transition: none;
-      }
-
-      .reveal,
-      .motion-ready .badge,
-      .motion-ready h1,
-      .motion-ready .hero-copy,
-      .motion-ready .hero-meta span {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @media (max-width: 1180px) {
-      .section-rail {
-        display: none;
-      }
-    }
-
-    @media (max-width: 820px) {
-      .grid,
-      .grid.three,
-      .stat-row,
-      .tool-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .toc-list a {
-        grid-template-columns: 36px 1fr;
-        gap: 12px;
-      }
-
-      .toc-number {
-        width: 36px;
-        height: 36px;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .page {
-        width: calc(100vw - 22px);
-        max-width: var(--max);
-        padding-top: 18px;
-      }
-
-      .hero,
-      .section-header,
-      .intro,
-      .toc,
-      .content-card,
-      .cta {
-        border-radius: 16px;
-      }
-
-      .hero {
-        padding: 28px 22px;
-      }
-
-      .flow-item {
-        grid-template-columns: 44px 1fr;
-      }
-
-      .flow-index {
-        width: 44px;
-        height: 44px;
-        font-size: 15px;
-      }
-
-      pre {
-        font-size: 12px;
-      }
-
-      .mobile-only-break {
-        display: block;
-      }
-    }
-  </style>
-</head><body>
-  <div class="scroll-progress" aria-hidden="true"><span></span></div>
-  <div class="page">
-    <header class="hero">
-      <div class="hero-inner">
-        <div class="badge">SAVE MATERIAL</div>
-        <h1>24時間働く<br class="mobile-only-break">AI秘書<br><span class="hero-accent">の作り方 完全手順</span></h1>
-        <p class="hero-copy">Claude Code / Codexにメール・カレンダー・チャットを繋いで、寝ている間に動く自分専用のAI秘書を作ります。動画で使った指示文をすべて、コピーして使える形で収録しています。</p>
-        <div class="hero-meta">
-          <span>MCP連携</span>
-          <span>コードを書かない</span>
-          <span>全プロンプト収録</span>
-        </div>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>24時間働くAI秘書の作り方｜MCP連携 完全手順</title>
+<meta name="description" content="Claude CodeやCodexにメール・カレンダー・チャットを繋ぎ、寝ている間に動く自分専用のAI秘書を作る手順です。コードは1行も書きません。">
+<meta property="og:title" content="24時間働くAI秘書の作り方｜保存版資料">
+<meta property="og:description" content="Claude CodeやCodexにメール・カレンダー・チャットを繋ぎ、寝ている間に動く自分専用のAI秘書を作る手順です。コードは1行も書きません。">
+<meta name="theme-color" content="#0b2a5b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=M+PLUS+1:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   保存版資料テンプレート v2 — 青ベース / 動きあり / GitHub Pages配布用
+   使い方: 各コンポーネントは <!-- [C:名前] --> で始まる。
+           使わないブロックはコメントごと削除してよい。
+   ============================================================ */
+
+:root{
+  /* --- 色（青ベース。紫・ピンクは使わない） --- */
+  --ink:#0a1020;          /* 本文 */
+  --ink-soft:#22304a;     /* 見出し補助 */
+  --muted:#5c6880;        /* 補足文 */
+  --navy:#0b2a5b;         /* 濃紺 */
+  --blue:#0866ff;         /* 主役の青 */
+  --blue-dark:#073b9a;
+  --cyan:#28d3ff;         /* 差し色 */
+  --sky:#d9eaff;
+  --blue-soft:#eef5ff;
+  --line:#d8e4f6;
+  --bg:#f6f9ff;
+  --white:#fff;
+  --code-bg:#0b1834;      /* プロンプト枠 */
+  --ok:#0f9d58;
+  --warn:#f59e0b;
+  --grad-hero:linear-gradient(135deg,#040c22 0%,#062a68 48%,#0a63d6 100%);
+  --grad-accent:linear-gradient(135deg,var(--cyan) 0%,var(--blue) 100%);
+  --shadow:0 18px 44px rgba(8,32,80,.12);
+  --shadow-hover:0 26px 64px rgba(8,32,80,.22);
+  --radius:18px;
+  --radius-sm:12px;
+  --max:1040px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden;scroll-padding-top:24px}
+body{
+  margin:0;color:var(--ink);background:var(--bg);
+  font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Sans',Meiryo,sans-serif;
+  line-height:1.95;font-size:16px;overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 12% -4%,rgba(8,102,255,.10),transparent 34%),
+    radial-gradient(circle at 92% 6%,rgba(40,211,255,.10),transparent 30%);
+  background-attachment:fixed;
+}
+a{color:var(--blue);font-weight:700;text-underline-offset:3px;text-decoration-thickness:2px}
+img{max-width:100%;height:auto;display:block}
+
+/* [C:進捗バー] ページ上端のスクロール進捗 */
+.progress{position:fixed;inset:0 0 auto 0;height:4px;z-index:60;background:transparent}
+.progress span{display:block;height:100%;width:0;background:var(--grad-accent);box-shadow:0 0 14px rgba(8,102,255,.6);transition:width .1s linear}
+
+.page{width:min(var(--max),calc(100vw - 32px));margin:0 auto;padding:28px 0 96px}
+
+/* ============ [C:ヒーロー] ============ */
+.hero{position:relative;overflow:hidden;border-radius:26px;color:#fff;padding:clamp(30px,5vw,64px);background:var(--grad-hero);box-shadow:var(--shadow-hover)}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(135deg,rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(45deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:74px 74px;opacity:.6}
+.hero::after{content:"";position:absolute;width:280px;height:280px;right:-90px;top:-110px;border-radius:50%;
+  background:radial-gradient(circle,rgba(40,211,255,.35),transparent 70%);animation:float 7s ease-in-out infinite;pointer-events:none}
+.hero-inner{position:relative;z-index:1}
+.hero-glow{position:absolute;inset:-40%;z-index:0;pointer-events:none;opacity:.5;
+  background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%),rgba(120,190,255,.30),transparent 60%);transition:opacity .4s ease}
+@keyframes float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-14px,0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+.badge{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:999px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+  font-size:12px;font-weight:800;letter-spacing:.1em}
+.badge .dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:blink 1.8s ease-in-out infinite}
+.hero h1{margin:18px 0 14px;font-family:'M PLUS 1',sans-serif;font-size:clamp(27px,5.4vw,52px);line-height:1.28;font-weight:800;letter-spacing:-.01em}
+.hero h1 .grad{background:linear-gradient(135deg,#8fd6ff,#fff 60%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero .lead{margin:0;font-size:clamp(14px,2.2vw,17px);opacity:.94;max-width:44em}
+.hero-meta{margin-top:16px;font-size:13px;opacity:.8}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.hero-figure{margin-top:28px;border-radius:18px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 16px 40px rgba(0,0,0,.42)}
+.hero-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.hero-stat{flex:1 1 150px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16)}
+.hero-stat b{display:block;font-family:'M PLUS 1',sans-serif;font-size:clamp(20px,3.4vw,28px);line-height:1.3}
+.hero-stat span{font-size:12px;opacity:.82}
+
+/* ============ [C:ボタン] ============ */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:13px 24px;
+  overflow:hidden;border-radius:14px;background:var(--grad-accent);color:#fff!important;font-weight:900;text-decoration:none;
+  box-shadow:0 12px 30px rgba(8,102,255,.34);transition:transform .26s ease,box-shadow .26s ease}
+.btn::before{content:"";position:absolute;inset:0;transform:translateX(-130%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent);transition:transform .6s ease}
+.btn:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(8,102,255,.46)}
+.btn:hover::before{transform:translateX(130%)}
+.btn.ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);box-shadow:none}
+.btn.solid{background:var(--navy);box-shadow:0 12px 30px rgba(11,42,91,.28)}
+.btn.small{min-height:40px;padding:9px 16px;font-size:13px;border-radius:11px;box-shadow:var(--shadow)}
+/* [C:ツールリンク] 本文中に置く小さめリンクボタン。章末に集約せず、話題が出た章の中に置く */
+.toollink{display:inline-flex;align-items:center;gap:7px;margin:4px 8px 4px 0;padding:8px 14px;border-radius:999px;
+  background:var(--white);border:1px solid var(--line);color:var(--blue)!important;font-size:13.5px;font-weight:800;
+  text-decoration:none;box-shadow:0 6px 16px rgba(8,32,80,.07);transition:transform .2s ease,border-color .2s ease}
+.toollink:hover{transform:translateY(-2px);border-color:var(--blue)}
+.toollink::after{content:"↗";font-size:11px;opacity:.7}
+
+/* ============ [C:目次] ============ */
+.toc{margin:30px 0 0;padding:24px 26px;border-radius:var(--radius);background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow)}
+.toc h2{margin:0 0 14px;font-family:'M PLUS 1',sans-serif;font-size:17px;color:var(--navy)}
+.toc ol{margin:0;padding-left:0;list-style:none;counter-reset:toc;display:grid;gap:6px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.toc li{counter-increment:toc}
+.toc a{display:flex;gap:10px;align-items:baseline;padding:8px 10px;border-radius:10px;color:var(--ink-soft)!important;
+  font-weight:700;font-size:14.5px;text-decoration:none;transition:background .2s ease,color .2s ease}
+.toc a::before{content:counter(toc,decimal-leading-zero);color:var(--blue);font-family:'M PLUS 1',sans-serif;font-size:13px}
+.toc a:hover,.toc a.active{background:var(--blue-soft);color:var(--navy)!important}
+
+/* [C:サイド進捗ナビ] PCのみ。現在地を点で示す */
+.sidenav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;display:none;flex-direction:column;gap:11px}
+.sidenav a{position:relative;width:11px;height:11px;border-radius:50%;background:var(--line);transition:background .25s ease,transform .25s ease}
+.sidenav a.active{background:var(--blue);transform:scale(1.45)}
+.sidenav a span{position:absolute;right:20px;top:50%;transform:translateY(-50%) translateX(6px);white-space:nowrap;
+  padding:5px 10px;border-radius:8px;background:var(--navy);color:#fff;font-size:11.5px;font-weight:700;
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+.sidenav a:hover span{opacity:1;transform:translateY(-50%) translateX(0)}
+@media (min-width:1240px){.sidenav{display:flex}}
+
+/* ============ [C:セクション見出し] ============ */
+.sec{margin-top:56px}
+.sec-label{margin:0;text-align:center;font-family:'M PLUS 1',sans-serif;font-size:12.5px;letter-spacing:.16em;color:var(--blue);font-weight:800}
+.sec-title{margin:6px 0 6px;text-align:center;font-family:'M PLUS 1',sans-serif;font-size:clamp(21px,4.4vw,31px);line-height:1.42;color:var(--navy);font-weight:800}
+.sec-lead{margin:0 auto;max-width:36em;text-align:center;font-size:14.5px;color:var(--muted)}
+
+/* ============ [C:本文カード] ============ */
+.card{margin-top:22px;padding:clamp(20px,3.4vw,32px);border-radius:var(--radius);background:var(--white);
+  border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .3s ease,box-shadow .3s ease}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card h3{margin:26px 0 10px;font-family:'M PLUS 1',sans-serif;font-size:clamp(17px,2.8vw,21px);color:var(--navy);line-height:1.5}
+.card h3:first-child{margin-top:0}
+.card p{margin:0 0 12px}
+.card p:last-child{margin-bottom:0}
+.hl{background:linear-gradient(transparent 62%,rgba(8,102,255,.22) 62%);font-weight:800}
+
+/* [C:3Dホバーカード] グリッド内の小カードだけ軽く反応させる */
+.tilt{transform-style:preserve-3d;transition:transform .3s ease}
+
+/* ============ [C:手順ステップ] 番号つき縦並び ============ */
+.step{display:flex;gap:16px;padding:20px 0;border-top:1px dashed var(--line)}
+.step:first-of-type{border-top:0;padding-top:4px}
+.step-no{flex:0 0 42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:12px;
+  background:var(--grad-accent);color:#fff;font-family:'M PLUS 1',sans-serif;font-weight:800;font-size:17px;
+  box-shadow:0 8px 20px rgba(8,102,255,.28)}
+.step-body{flex:1;min-width:0}
+.step-body h4{margin:6px 0 8px;font-family:'M PLUS 1',sans-serif;font-size:16.5px;color:var(--navy);line-height:1.55}
+.step-body p{margin:0 0 10px;font-size:15px}
+
+/* ============ [C:グリッドカード] 3つ並べる用 ============ */
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:6px}
+.grid-item{padding:20px;border-radius:var(--radius-sm);background:var(--blue-soft);border:1px solid var(--line)}
+.grid-item .tag{display:inline-block;margin-bottom:8px;padding:3px 11px;border-radius:999px;background:var(--navy);color:#fff;font-size:11.5px;font-weight:800}
+.grid-item h4{margin:0 0 7px;font-family:'M PLUS 1',sans-serif;font-size:16px;color:var(--navy);line-height:1.5}
+.grid-item p{margin:0;font-size:14px;color:var(--ink-soft)}
+
+/* ============ [C:要点リスト] ============ */
+.takeaway{margin:0;padding:0;list-style:none;counter-reset:tk}
+.takeaway li{counter-increment:tk;position:relative;padding:14px 0 14px 46px;border-bottom:1px dashed var(--line)}
+.takeaway li:last-child{border-bottom:0}
+.takeaway li::before{content:counter(tk);position:absolute;left:0;top:14px;width:30px;height:30px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;background:var(--navy);color:#fff;font-size:14px;font-weight:800}
+.takeaway b{display:block;color:var(--navy);font-size:16px;line-height:1.6}
+.takeaway span{display:block;margin-top:5px;font-size:14.5px;color:var(--ink-soft)}
+
+/* [C:チェックリスト] */
+.check{margin:0;padding:0;list-style:none}
+.check li{position:relative;padding:9px 0 9px 32px;font-size:15px}
+.check li::before{content:"";position:absolute;left:4px;top:17px;width:14px;height:8px;border-left:3px solid var(--blue);border-bottom:3px solid var(--blue);transform:rotate(-45deg)}
+
+/* ============ [C:プロンプト枠] コピーボタン付き ============ */
+.prompt{position:relative;margin:18px 0;border-radius:var(--radius-sm);background:var(--code-bg);
+  box-shadow:0 16px 38px rgba(4,20,54,.32);overflow:hidden}
+.prompt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;
+  background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.09)}
+.prompt-head b{color:#cfe4ff;font-size:12.5px;font-weight:800;letter-spacing:.04em}
+.copy{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:0;border-radius:9px;cursor:pointer;
+  background:var(--blue);color:#fff;font-size:12px;font-weight:800;font-family:inherit;transition:background .2s ease,transform .2s ease}
+.copy:hover{transform:translateY(-1px)}
+.copy.done{background:var(--ok)}
+.prompt pre{margin:0;padding:18px 18px 20px;overflow-x:auto;color:#e6f0ff;font-size:13.5px;line-height:1.85;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Noto Sans JP',monospace;white-space:pre-wrap;word-break:break-word}
+
+/* ============ [C:画像] 生成画像・スクショを本文に挟む ============ */
+.figure{margin:22px 0;border-radius:var(--radius-sm);overflow:hidden;background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow)}
+.figure img{width:100%}
+.figure figcaption{padding:12px 16px;font-size:13px;color:var(--muted);background:var(--blue-soft);border-top:1px solid var(--line)}
+
+/* ============ [C:動画] 16:9で埋め込む ============ */
+.video{margin:20px 0 0;border-radius:var(--radius-sm);overflow:hidden;background:#050d1f;aspect-ratio:16/9;box-shadow:var(--shadow)}
+.video iframe,.video video{width:100%;height:100%;border:0;display:block}
+.video-note{margin:12px 0 0;font-size:13.5px;color:var(--muted)}
+
+/* ============ [C:表] 横スクロール対応 ============ */
+.table-scroll{margin:18px 0;overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--white)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-weight:800;white-space:nowrap}
+tbody tr:nth-child(even){background:var(--blue-soft)}
+tbody tr:last-child td{border-bottom:0}
+
+/* ============ [C:補足ボックス] ============ */
+.note{margin:16px 0;padding:14px 18px;border-radius:var(--radius-sm);background:var(--blue-soft);border-left:4px solid var(--blue);font-size:14px;color:var(--ink-soft)}
+.note.warn{background:#fff8ec;border-left-color:var(--warn)}
+.note b{color:var(--navy)}
+.example{margin:12px 0;padding:14px 18px;border-radius:var(--radius-sm);background:#f4f8ff;border:1px dashed var(--blue);font-size:14px}
+
+/* ============ [C:締めCTA] ============ */
+.closing{margin-top:64px;padding:clamp(30px,5vw,52px);border-radius:26px;color:#fff;text-align:center;
+  background:var(--grad-hero);box-shadow:var(--shadow-hover);position:relative;overflow:hidden}
+.closing::after{content:"";position:absolute;width:340px;height:340px;left:-120px;bottom:-160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(40,211,255,.28),transparent 70%);animation:float 8s ease-in-out infinite}
+.closing-inner{position:relative;z-index:1}
+.closing h2{margin:0 0 12px;font-family:'M PLUS 1',sans-serif;font-size:clamp(20px,4vw,30px);line-height:1.45}
+.closing p{margin:0 auto 10px;max-width:38em;font-size:15px;opacity:.94}
+.closing .btn{margin-top:20px}
+.bonus{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:24px 0 4px;text-align:left}
+.bonus div{padding:14px 16px;border-radius:13px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)}
+.bonus b{display:block;font-family:'M PLUS 1',sans-serif;font-size:19px}
+.bonus span{font-size:12.5px;opacity:.85}
+
+.foot{margin-top:34px;text-align:center;font-size:12.5px;color:var(--muted)}
+
+/* [C:トップへ戻る] */
+.totop{position:fixed;right:20px;bottom:22px;z-index:50;width:48px;height:48px;border:0;border-radius:50%;cursor:pointer;
+  background:var(--navy);color:#fff;font-size:19px;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+  transition:opacity .3s ease,transform .3s ease}
+.totop.show{opacity:1;pointer-events:auto}
+.totop:hover{transform:translateY(-3px)}
+
+/* ============ [C:出現アニメーション] ============ */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:640px){
+  body{font-size:15.5px;line-height:1.9}
+  .step{gap:12px}
+  .step-no{flex-basis:36px;height:36px;font-size:15px}
+  .totop{right:14px;bottom:14px;width:44px;height:44px}
+}
+
+/* 動きが苦手な閲覧者には動きを止める */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="progress"><span id="bar"></span></div>
+
+<nav class="sidenav" id="sidenav" aria-label="セクション">
+  <a href="#s1"><span>AI秘書とは</span></a>
+  <a href="#s2"><span>準備</span></a>
+  <a href="#s3"><span>外部連携</span></a>
+  <a href="#s4"><span>メール</span></a>
+  <a href="#s5"><span>リサーチ</span></a>
+  <a href="#s6"><span>自動実行</span></a>
+  <a href="#s7"><span>育て方</span></a>
+  <a href="#s8"><span>安全設定</span></a>
+  <a href="#s9"><span>詰まった時</span></a>
+</nav>
+
+<div class="page">
+
+  <header class="hero" id="hero">
+    <div class="hero-glow" id="glow"></div>
+    <div class="hero-inner">
+      <span class="badge"><span class="dot"></span>保存版資料｜手順まとめ</span>
+      <h1>24時間働くAI秘書<br><span class="grad">の作り方 完全手順</span></h1>
+      <p class="lead">保存版資料のお受け取り、ありがとうございます。この資料では、内容のまとめと、実際に手を動かすための手順をまとめています。</p>
+
+      <div class="hero-stats">
+        <div class="hero-stat"><b>0円</b><span>追加費用</span></div>
+        <div class="hero-stat"><b>13本</b><span>そのまま使える指示文</span></div>
+        <div class="hero-stat"><b>0行</b><span>書くコードの量</span></div>
       </div>
-    </header>
 
-    <section class="intro" id="about">
-      <h2>この資料について</h2>
-      <p class="lead">今回は動画のご視聴と、保存版資料のお受け取りをいただきありがとうございます。</p>
-      <p>この資料では、動画内容のまとめと、実践に落とし込むための手順を整理しています。動画では時間の都合で流した設定画面や、APIキーの取得手順も、こちらに書き起こしています。</p>
-      <div class="grid three">
-        <div class="mini-card">
-          <strong>1. 外の世界に繋ぐ</strong>
-          <p>MCPでGmail・カレンダー・Slackを繋ぎ、AIが自分の情報を見た状態で動けるようにします。</p>
-        </div>
-        <div class="mini-card">
-          <strong>2. 仕事を任せる</strong>
-          <p>メールの仕分け、返信の下書き、競合リサーチを日本語の指示だけで実行します。</p>
-        </div>
-        <div class="mini-card">
-          <strong>3. 放っておいても動かす</strong>
-          <p>毎朝決まった時間に自動で走らせ、使いながら自分専用に育てていきます。</p>
-        </div>
+      <div class="hero-cta">
+        <a class="btn" href="#s1">資料を読みはじめる →</a>
       </div>
-      <div class="note">
-        全体を通して、コードを書く場面は一度も出てきません。やることは日本語で頼むことと、設定画面で許可を押すことだけです。分からない画面が出てきたら、そのままAIに聞くのが一番早いです。
+
+
+      <p class="hero-meta">※ このページはブックマークして、作業しながら見返してください。</p>
+    </div>
+  </header>
+
+  <nav class="toc rv">
+    <h2>この資料の中身</h2>
+    <ol>
+      <li><a href="#s1">AI秘書とは何か／かかる費用</a></li>
+      <li><a href="#s2">準備：ツールの導入とフォルダ・ルールファイル</a></li>
+      <li><a href="#s3">MCP連携：Gmail・カレンダー・チャットを繋ぐ</a></li>
+      <li><a href="#s4">最初の仕事：メールを仕分けて返信下書きまで</a></li>
+      <li><a href="#s5">リサーチ：APIキー取得からスキル化まで</a></li>
+      <li><a href="#s6">自動実行：毎朝、触らないで動かす</a></li>
+      <li><a href="#s7">育て方：使うほど自分専用になる</a></li>
+      <li><a href="#s8">権限とセキュリティの推奨設定</a></li>
+      <li><a href="#s9">詰まった時のチェックリスト</a></li>
+    </ol>
+  </nav>
+
+  <section class="sec" id="s1">
+    <p class="sec-label rv">STEP 01</p>
+    <h2 class="sec-title rv">AI秘書とは何か／かかる費用</h2>
+    <p class="sec-lead rv">何を任せられて、いくらかかるのかを最初にはっきりさせます。</p>
+
+    <div class="card rv">
+      <p>AI秘書は、自分専用の業務アシスタントです。メールや予定のように、毎日ちょっとずつ時間を取られる雑務をまとめて引き受けてもらいます。</p>
+
+
+      <h3>AI社員との違い</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>　</th><th>AI社員</th><th>AI秘書</th></tr></thead>
+          <tbody>
+            <tr><td>任せる仕事</td><td>事業の特定の業務</td><td>自分の身のまわりの雑務全般</td></tr>
+            <tr><td>例</td><td>投稿作成、進捗管理、問い合わせ対応</td><td>メール仕分け、予定確認、リサーチ</td></tr>
+            <tr><td>仕組み</td><td colspan="2">同じです。違うのは何を任せるかだけ</td></tr>
+          </tbody>
+        </table>
       </div>
-      <h4>おすすめの使い方</h4>
-      <ul class="check-list">
-        <li>まずSECTION 02までを読んで、手元にAI秘書用のフォルダを1つ作る</li>
-        <li>SECTION 03でGmailとカレンダーだけ繋ぐ（Slackは後からでも大丈夫です）</li>
-        <li>SECTION 04のメール仕分けを1回動かして、感触を確かめる</li>
-        <li>そこまでできたら、SECTION 06の自動実行で毎朝動く状態にする</li>
-        <li>YouTubeリサーチ（SECTION 05）は少し手順が多いので、余裕がある日にまとめてやる</li>
+
+      <h3>完成イメージ</h3>
+      <p>朝起きてチャットを開くと、今日の予定と、返信が必要なメールが何の用件かまで1行でまとまっている。この状態を作ります。自分では何もしていません。寝ている間に動いています。</p>
+
+      <h3>かかる費用</h3>
+      <ul class="check">
+        <li>Claude CodeまたはCodexのどちらかを契約していれば、この資料の内容に追加費用はかかりません</li>
+        <li>一番安いプランで月20ドル前後（為替で変わります。最新は各公式ページで確認してください）</li>
+        <li>外部ツールとの接続も自動実行も、もともと入っている機能です。新しく買うものはありません</li>
+        <li>この資料の範囲なら、一番安いプランの枠で足ります。重い調べ物を1日中回すようになったら、その時にプランを上げれば大丈夫です</li>
       </ul>
-    </section>
+      <a class="toollink" href="https://claude.com/product/claude-code" target="_blank" rel="noopener">Claude Code 公式</a>
+      <a class="toollink" href="https://developers.openai.com/codex/" target="_blank" rel="noopener">Codex 公式</a>
 
-    <nav class="toc" aria-label="目次">
-      <h2>CONTENTS</h2>
-      <ul class="toc-list">
-        <li><a href="#sec1"><span class="toc-number">1</span>AI秘書とは何か／かかる費用</a></li>
-        <li><a href="#sec2"><span class="toc-number">2</span>準備：ツールの導入とフォルダ・ルールファイル</a></li>
-        <li><a href="#sec3"><span class="toc-number">3</span>MCP連携：Gmail・カレンダー・Slackを繋ぐ</a></li>
-        <li><a href="#sec4"><span class="toc-number">4</span>最初の仕事：メールを仕分けて返信下書きまで</a></li>
-        <li><a href="#sec5"><span class="toc-number">5</span>YouTubeリサーチ：APIキー取得からスキル化まで</a></li>
-        <li><a href="#sec6"><span class="toc-number">6</span>自動実行：毎朝、触らないで動かす</a></li>
-        <li><a href="#sec7"><span class="toc-number">7</span>育て方：使うほど自分専用になる</a></li>
-        <li><a href="#sec8"><span class="toc-number">8</span>権限とセキュリティの推奨設定</a></li>
-        <li><a href="#sec9"><span class="toc-number">9</span>つまずいた時のチェックリスト</a></li>
-        <li><a href="#sec10"><span class="toc-number">10</span>次に足していく仕事のアイデア</a></li>
-      </ul>
-    </nav>
+      <div class="note"><b>ポイント：</b>この資料はCodexの画面で説明していますが、Claude Codeでも手順はほぼ同じです。呼び方が違うところだけ、その都度書き添えています。</div>
+    </div>
+  </section>
 
-    <section id="sec1">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 01</div>
-        <h2 class="section-title">AI秘書とは何か／かかる費用</h2>
+  <section class="sec" id="s2">
+    <p class="sec-label rv">STEP 02</p>
+    <h2 class="sec-title rv">準備：ツールの導入とフォルダ・ルールファイル</h2>
+    <p class="sec-lead rv">ここが土台です。先に置き場所とルールを作ってから、外部ツールを繋ぎます。</p>
+
+    <div class="card rv">
+      <h3>先に2分で、この章の流れを掴む</h3>
+      <div class="video">
+        <video src="assets/setup-guide.mp4" controls preload="metadata" playsinline></video>
       </div>
-      <div class="section-body">
-        <p>AI秘書は、自分専用の業務アシスタントです。メールや予定のように毎日ちょっとずつ時間を取られる雑務を、まとめて引き受けてもらいます。</p>
-        <h4>AI社員との違い</h4>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>　</th><th>AI社員</th><th>AI秘書</th></tr></thead>
-            <tbody>
-              <tr><td>任せる仕事</td><td>事業の特定の業務</td><td>自分の身のまわりの雑務全般</td></tr>
-              <tr><td>例</td><td>投稿作成、進捗管理、CS対応</td><td>メール仕分け、予定確認、リサーチ</td></tr>
-              <tr><td>仕組み</td><td colspan="2">同じです。違うのは何を任せるかだけ</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <h4>完成イメージ</h4>
-        <p>朝起きてチャットを開くと、今日の予定と、返信が必要なメールが何の用件かまで1行でまとまっている。この状態を作ります。自分では何もしていません。寝ている間に動いています。</p>
-        <h4>かかる費用</h4>
-        <ul class="check-list">
-          <li><a href="https://claude.com/product/claude-code" target="_blank" rel="noopener">Claude Code</a>または<a href="https://developers.openai.com/codex/" target="_blank" rel="noopener">Codex</a>のどちらかを契約していれば、この資料の内容に追加費用はかかりません</li>
-          <li>一番安いプランで月20ドル前後（為替により変動します。最新は各公式ページで確認してください）</li>
-          <li>外部ツールとの接続も自動実行も、もともと入っている機能です。新しく買うものはありません</li>
-          <li>この資料の範囲であれば、一番安いプランの枠で足ります。重い調べ物を1日中回すようになったら、その時にプランを上げれば大丈夫です</li>
-        </ul>
-        <div class="note">
-          この資料ではCodexの画面で説明していますが、Claude Codeでも手順はほぼ同じです。呼び方が違うところだけ、その都度書き添えています。
+      <p class="video-note">▶ この章の3つの作業（ツールを入れる → フォルダを作る → ルールファイルを作る）を通しで解説しています。見てから下を順番にやると迷いません。</p>
+      <details class="note"><summary>ナレーション全文を読む</summary>
+        <p>AI秘書を作る準備を、はじめから通しで解説します。やることは3つだけです。ツールを入れる、フォルダを作る、ルールファイルを作る。1つずつ、そのまま真似してください。</p>
+        <p>まず1つ目、ツールを入れます。使うのはClaude CodeかCodexです。どちらでも構いません。公式サイトからダウンロードして、指示どおりに進めるだけです。契約しているアカウントでログインするところまで済ませてください。</p>
+        <p>2つ目、フォルダを1個作ります。MacならFinder、Windowsならエクスプローラーで、いつも使っている場所に「AI秘書」という名前のフォルダを作ります。作ったら、アプリのチャットからそのフォルダを選んでください。</p>
+        <p>ここで大事なのは、普段使っているフォルダを選ばないことです。関係ないファイルまで読ませると、余計な情報が入った状態で判断することになり、出力の精度が落ちます。見せる場所は、最初から分けるのが正解です。</p>
+        <p>3つ目、ルールファイルを作ります。ルールファイルは、AIに毎回守らせることを書いておくファイルです。Claude CodeではCLAUDE.md、CodexではAGENTS.mdという名前になります。</p>
+        <p>これも自分では書きません。AIに作ってもらいます。資料に置いてあるプロンプトを貼るだけです。ゴールだけ伝えて、足りない情報はAIに質問させる。この頼み方をゴールシークプロンプトと言います。自分で完璧な指示を書くより、圧倒的に早いです。</p>
+        <p>ルールファイルは短くて構いません。長すぎると逆に守られなくなります。増えてきたら別のファイルに分けて、ルールファイルからは参照するだけにしてください。</p>
+        <p>1つだけ、必ず入れてほしい一文があります。「大事なことはメモに残す」です。これが後の育て方の章で効いてきます。準備は以上です。</p>
+      </details>
+
+      <h3>手順</h3>
+      <div class="step">
+        <div class="step-no">1</div>
+        <div class="step-body">
+          <h4>ツールを入れる</h4>
+          <p>Claude CodeとCodexは、どちらもデスクトップアプリが用意されています。公式の手順に沿ってインストールし、契約しているアカウントでログインするところまで済ませてください。</p>
+          <a class="toollink" href="https://claude.com/product/claude-code" target="_blank" rel="noopener">Claude Code 公式</a>
+          <a class="toollink" href="https://developers.openai.com/codex/" target="_blank" rel="noopener">Codex 公式</a>
         </div>
       </div>
-    </section>
-
-    <section id="sec2">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 02</div>
-        <h2 class="section-title">準備：ツールの導入とフォルダ・ルールファイル</h2>
-      </div>
-      <div class="section-body">
-        <h4>まだ入れていない方へ</h4>
-        <p>Claude CodeとCodexは、どちらもデスクトップアプリが用意されています。公式の手順に沿ってインストールし、契約しているアカウントでログインするところまで済ませてください。</p>
-        <ul class="check-list">
-          <li><a href="https://claude.com/product/claude-code" target="_blank" rel="noopener">Claude Code 公式ページ</a>（Anthropicアカウントでログイン）</li>
-          <li><a href="https://developers.openai.com/codex/" target="_blank" rel="noopener">Codex 公式ページ</a>（OpenAIアカウントでログイン）</li>
-        </ul>
-        <div class="note">
-          インストールで詰まったら、エラー画面をスクリーンショットに撮って、そのままAIに貼って聞いてください。環境ごとの差はAIが埋めてくれます。
+      <div class="step">
+        <div class="step-no">2</div>
+        <div class="step-body">
+          <h4>AI秘書専用のフォルダを作る</h4>
+          <p>MacのFinder、Windowsのエクスプローラーで「AI秘書」という名前のフォルダを1つ作り、アプリのチャットからそのフォルダを選択します。</p>
+          <div class="example">例：デスクトップやドキュメントの中に「AI秘書」フォルダを新規作成</div>
         </div>
-        <h4>1. AI秘書専用のフォルダを作る</h4>
-        <p>MacのFinder、Windowsのエクスプローラーで、いつも使っている場所に「AI秘書」という名前のフォルダを1つ作ります。作ったら、アプリのチャットからそのフォルダを選択してください。</p>
-        <p><strong>普段使っているフォルダは選ばないでください。</strong>関係ないファイルまで読ませると、余計な情報が入った状態で判断することになり、出力の精度が落ちます。見せる場所は最初から分けるのが正解です。</p>
-        <h4>2. ルールファイルを作る</h4>
-        <p>ルールファイルは、AIに毎回守らせることを書いておくファイルです。Claude Codeでは <code>CLAUDE.md</code>、Codexでは <code>AGENTS.md</code> という名前になります。</p>
-        <p>これも自分で書きません。AIに作ってもらいます。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">ルールファイル作成プロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>このフォルダで、僕専用のAI秘書として動いてほしいです。
+      </div>
+      <div class="step">
+        <div class="step-no">3</div>
+        <div class="step-body">
+          <h4>ルールファイルをAIに作らせる</h4>
+          <p>ルールファイルは、AIに毎回守らせることを書いておくファイルです。Claude Codeでは <code>CLAUDE.md</code>、Codexでは <code>AGENTS.md</code> という名前になります。自分では書きません。</p>
+        </div>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>ルールファイルを作らせる</b>
+          <button class="copy" type="button">コピー</button>
+        </div>
+        <pre>このフォルダで、僕専用のAI秘書として動いてほしいです。
 CLAUDE.mdを作ってください。
-必要な情報は僕に質問してください。</code></pre>
-        </div>
-        <p>※ Codexを使っている方は <code>CLAUDE.md</code> を <code>AGENTS.md</code> に置き換えてください。</p>
-        <h4>なぜ質問させるのか</h4>
-        <p>これはゴールシークプロンプトと呼ばれる頼み方です。ゴールだけ伝えて、足りない情報はAIに聞かせます。「どんな仕事をしていますか」「連絡はどのツールを使っていますか」と向こうから聞いてくるので、答えていくだけでファイルができあがります。自分で完璧な指示を書くより圧倒的に早いです。</p>
-        <h4>ルールファイルは短くていい</h4>
-        <ul class="check-list">
-          <li>長すぎると逆に守られなくなります。最初はシンプルで大丈夫です</li>
-          <li>増えてきたら別ファイルに分けて、ルールファイルからは参照するだけにします</li>
-          <li>「大事なことはメモに残す」という一文は入れておいてください。SECTION 07の育て方がこれで効きます</li>
-        </ul>
-        <h4>なぜフォルダから作るのか</h4>
-        <p>考えるほうはAIがやってくれるので、こちらが用意するのは情報のほうです。賢い頭を借りて、自分の情報やデータは手元に置いておく。こうしておくと出力の精度が上がります。</p>
+必要な情報は僕に質問してください。</pre>
       </div>
-    </section>
-    <section id="sec3">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 03</div>
-        <h2 class="section-title">MCP連携：Gmail・カレンダー・Slackを繋ぐ</h2>
-      </div>
-      <div class="section-body">
-        <p>ここが一番大事なところです。今の状態だと、AIはさっき作ったフォルダの中しか見えていません。そこを繋ぐのがMCPです。</p>
-        <h4>MCPとは</h4>
-        <p>ざっくり言うと、AIから外部ツールを扱えるようにする仕組みです。APIの仲間だと思ってもらえれば大丈夫です。GmailやカレンダーをAIが読めるようになります。</p>
-        <div class="note">
-          昔はAPIキーを発行して設定ファイルに書く必要がありましたが、主要なツールは一覧から選ぶだけで繋がるようになっています。この章では、その一覧にあるものだけを扱います。
-        </div>
-        <h4>接続の手順</h4>
-        <ol class="step-list">
-          <li>アプリの左下から<strong>設定</strong>を開く</li>
-          <li><strong>プラグイン</strong>（Claude Codeでは<strong>コネクタ</strong>）の欄を開く</li>
-          <li>繋げるツールの一覧が出るので、<strong>Gmail</strong>を選ぶ</li>
-          <li>認証の画面が開くので、<strong>自分のアカウントで許可</strong>を押す</li>
-          <li>一覧に戻って、接続済みの表示になっていることを確認する</li>
-        </ol>
-        <p>同じ流れで<strong>Googleカレンダー</strong>と<strong>Slack</strong>も繋ぎます。3つとも数クリックで終わります。</p>
-        <h4>繋がらないときは</h4>
-        <p>エラーが出たら、その画面をスクリーンショットに撮って、そのままAIに聞いてください。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">接続トラブル時の聞き方</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>Gmailのプラグインを接続できないんだけど、どうしたらいい？
-（エラー画面のスクリーンショットを添付）</code></pre>
-        </div>
-        <p>分からないことは全部AIに聞く。これは習慣にしておくと、この先ずっと楽になります。</p>
-        <h4>接続するツールの公式ページ</h4>
-        <ul class="check-list">
-          <li><a href="https://mail.google.com/" target="_blank" rel="noopener">Gmail</a>：メールの読み取りと下書き作成に使います</li>
-          <li><a href="https://calendar.google.com/" target="_blank" rel="noopener">Googleカレンダー</a>：予定の確認と登録に使います</li>
-          <li><a href="https://slack.com/" target="_blank" rel="noopener">Slack</a>：結果の通知先に使います。DiscordやChatworkでも代用できます</li>
-        </ul>
-      </div>
-    </section>
+      <p>※ Codexを使っている方は <code>CLAUDE.md</code> を <code>AGENTS.md</code> に置き換えてください。</p>
 
-    <section id="sec4">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 04</div>
-        <h2 class="section-title">最初の仕事：メールを仕分けて返信下書きまで</h2>
+      <h3>なぜ質問させるのか</h3>
+      <p>これはゴールシークプロンプトと呼ばれる頼み方です。ゴールだけ伝えて、足りない情報はAIに聞かせます。「どんな仕事をしていますか」「連絡はどのツールを使っていますか」と向こうから聞いてくるので、答えていくだけでファイルができあがります。</p>
+
+      <ol class="takeaway">
+        <li><b>普段使いのフォルダを選ばない</b><span>余計な情報が混ざると出力の精度が落ちます</span></li>
+        <li><b>ルールファイルは短く</b><span>長すぎると守られません。増えたら別ファイルに分けます</span></li>
+        <li><b>「大事なことはメモに残す」を入れる</b><span>STEP 07の育て方がこの一文で効きます</span></li>
+      </ol>
+
+      <div class="note"><b>ポイント：</b>インストールで詰まったら、エラー画面をスクリーンショットに撮って、そのままAIに貼って聞いてください。環境ごとの差はAIが埋めてくれます。</div>
+    </div>
+  </section>
+  <section class="sec" id="s3">
+    <p class="sec-label rv">STEP 03</p>
+    <h2 class="sec-title rv">MCP連携：Gmail・カレンダー・チャットを繋ぐ</h2>
+    <p class="sec-lead rv">ここが一番大事です。AIに外の世界を見せます。</p>
+
+    <div class="card rv">
+      <p>いまの状態だと、AIはSTEP 02で作ったフォルダの中しか見えていません。そこを繋ぐのがMCPです。</p>
+
+
+      <h3>MCPとは</h3>
+      <p>ざっくり言うと、AIから外部ツールを扱えるようにする仕組みです。APIの仲間だと思ってもらえれば大丈夫です。GmailやカレンダーをAIが読めるようになります。</p>
+
+      <h3>手順</h3>
+      <div class="step">
+        <div class="step-no">1</div>
+        <div class="step-body"><h4>設定を開く</h4><p>アプリの左下から設定を開きます。</p></div>
       </div>
-      <div class="section-body">
-        <p>繋がったので、さっそく仕事を頼みます。まずは仕分けから。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">未読メールの仕分けプロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>直近1週間の未読のメールを全部読んで、
+      <div class="step">
+        <div class="step-no">2</div>
+        <div class="step-body"><h4>プラグインの欄を開く</h4><p>Claude Codeでは「コネクタ」という名前になっています。繋げるツールの一覧が出ます。</p></div>
+      </div>
+      <div class="step">
+        <div class="step-no">3</div>
+        <div class="step-body">
+          <h4>Gmailを選んで認証する</h4>
+          <p>認証の画面が開くので、自分のアカウントで許可を押します。一覧に戻って、接続済みの表示になっていることを確認してください。</p>
+          <a class="toollink" href="https://mail.google.com/" target="_blank" rel="noopener">Gmail</a>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-no">4</div>
+        <div class="step-body">
+          <h4>同じ流れでカレンダーとチャットも繋ぐ</h4>
+          <p>3つとも数クリックで終わります。通知先はSlackでもDiscordでもChatworkでも構いません。自分が普段開いているものを選んでください。</p>
+          <a class="toollink" href="https://calendar.google.com/" target="_blank" rel="noopener">Googleカレンダー</a>
+          <a class="toollink" href="https://slack.com/" target="_blank" rel="noopener">Slack</a>
+        </div>
+      </div>
+
+      <h3>繋がらないときは</h3>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>接続で詰まった時の聞き方</b>
+          <button class="copy" type="button">コピー</button>
+        </div>
+        <pre>Gmailのプラグインを接続できないんだけど、どうしたらいい？
+（エラー画面のスクリーンショットを添付）</pre>
+      </div>
+      <div class="note"><b>ポイント：</b>分からないことは全部AIに聞く。これを習慣にしておくと、この先ずっと楽になります。エラー画面はスクリーンショットごと貼るのが一番早いです。</div>
+    </div>
+  </section>
+
+  <section class="sec" id="s4">
+    <p class="sec-label rv">STEP 04</p>
+    <h2 class="sec-title rv">最初の仕事：メールを仕分けて返信下書きまで</h2>
+    <p class="sec-lead rv">繋がったら、すぐ仕事を頼みます。まずは仕分けからです。</p>
+
+    <div class="card rv">
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>未読メールを仕分ける</b>
+          <button class="copy" type="button">コピー</button>
+        </div>
+        <pre>直近1週間の未読のメールを全部読んで、
 「返信が必要」「確認だけ」の2つに分けてください。
-返信が必要なものは、何の用件かを1行で教えてください。</code></pre>
-        </div>
-        <p>メールは読む時間より、確認するまでのハードルや、返信するかどうかの判断のほうが長いです。そこを先に潰してくれるのが効きます。</p>
-        <h4>返信の下書きまで書かせる</h4>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">返信下書き作成プロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>返信が必要なものは、それぞれ返信の下書きを作ってください。
-送信はしないでください。足りない情報は私に質問してください。</code></pre>
-        </div>
-        <div class="note">
-          <strong>「送信はしないでください」は必ず入れてください。</strong>思ったものと違う返信を勝手に送られたら元も子もありません。指示に書いたうえで、SECTION 08の権限設定でも送信を渡さないようにします。二重で止めておくのが安全です。
-        </div>
-        <h4>「結局全部直すなら自分で書くのと変わらない」と思ったら</h4>
-        <p>0から書くのと、あるものを直すのは全然違います。加えて、直した内容は覚えさせられるので、直す量はだんだん減っていきます。</p>
-        <p>僕の例で言うと、クライアントとのやりとりは基本LINEで、Gmailには契約しているサービスからの連絡が多く来ます。自分で全部見て返信するのが面倒な領域なので、ここを任せるだけでも効果があります。</p>
-        <h4>口調を寄せていく</h4>
-        <ul class="check-list">
-          <li>過去のやり取りを読ませる</li>
-          <li>「この人にはタメ口」のように、相手ごとの温度を覚えさせる</li>
-          <li>詳しい育て方はSECTION 07で扱います</li>
-        </ul>
+返信が必要なものは、何の用件かを1行で教えてください。</pre>
       </div>
-    </section>
+      <p>メールは読む時間より、確認するまでのハードルや、返信するかどうかの判断のほうが長いです。そこを先に潰してくれるのが効きます。</p>
 
-    <section id="sec5">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 05</div>
-        <h2 class="section-title">YouTubeリサーチ：APIキー取得からスキル化まで</h2>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>返信の下書きまで書かせる</b>
+          <button class="copy" type="button">コピー</button>
+        </div>
+        <pre>返信が必要なものは、それぞれ返信の下書きを作ってください。
+送信はしないでください。足りない情報は私に質問してください。</pre>
       </div>
-      <div class="section-body">
-        <p>ここからは、競合リサーチのように時間が溶ける作業を任せます。ネタが無いのではなく、探す時間が無い。そういう仕事です。</p>
-        <div class="note">
-          YouTubeはSECTION 03のプラグイン一覧にありません。<strong>鍵（APIキー）を自分で1つ取ってくる必要があります。</strong>ここだけ手順が多いので、動画では流した部分も含めて全部書いておきます。
+
+      <div class="note warn"><b>注意：</b>「送信はしないでください」は必ず入れてください。思ったものと違う返信を勝手に送られたら元も子もありません。指示に書いたうえで、STEP 08の権限設定でも送信を渡さないようにします。二重で止めておくのが安全です。</div>
+
+      <h3>「結局全部直すなら自分で書くのと変わらない」と思ったら</h3>
+      <p>0から書くのと、あるものを直すのは全然違います。加えて、直した内容は覚えさせられるので、直す量はだんだん減っていきます。</p>
+      <p>星川の場合は、クライアントとのやりとりは基本LINEで、Gmailには契約しているサービスからの連絡が多く来ます。自分で全部見て返信するのが面倒な領域なので、ここを任せるだけでも効果があります。</p>
+
+      <ul class="check">
+        <li>過去のやり取りを読ませる</li>
+        <li>「この人にはタメ口」のように、相手ごとの温度を覚えさせる</li>
+        <li>詳しい育て方はSTEP 07で扱います</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec" id="s5">
+    <p class="sec-label rv">STEP 05</p>
+    <h2 class="sec-title rv">リサーチ：APIキー取得からスキル化まで</h2>
+    <p class="sec-lead rv">時間が溶ける調べもの系を任せます。ここだけ手順が多いので詳しく書きます。</p>
+
+    <div class="card rv">
+      <p>ネタが無いのではなく、探す時間が無い。そういう仕事を渡します。ここでは例としてYouTubeの競合リサーチを扱いますが、考え方はどのジャンルでも同じです。</p>
+
+      <div class="note"><b>ポイント：</b>YouTubeはSTEP 03のプラグイン一覧にありません。<b>鍵（APIキー）を自分で1つ取ってくる必要があります。</b>本編では流した部分も含めて、全部書いておきます。</div>
+
+      <h3>STEP 1. YouTube Data APIのキーを取得する</h3>
+      <p>Googleが無料で発行しています。Google Cloud Consoleから取得します。</p>
+      <div class="step"><div class="step-no">1</div><div class="step-body"><h4>Google Cloud Consoleを開く</h4><p>普段YouTubeで使っているGoogleアカウントでログインします。初回は利用規約の同意画面が出るので、同意して続行してください。</p><a class="toollink" href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a></div></div>
+      <div class="step"><div class="step-no">2</div><div class="step-body"><h4>プロジェクトを作る</h4><p>画面上部の「プロジェクトを選択」→「新しいプロジェクト」をクリックし、名前を入れて「作成」。</p><div class="example">例：プロジェクト名「YouTube Research」（何でも構いません）</div></div></div>
+      <div class="step"><div class="step-no">3</div><div class="step-body"><h4>APIを有効にする</h4><p>左メニューの「APIとサービス」→「ライブラリ」を開き、検索バーに <code>YouTube Data API v3</code> と入力。結果をクリックして「有効にする」を押します（数秒かかることがあります）。</p></div></div>
+      <div class="step"><div class="step-no">4</div><div class="step-body"><h4>APIキーを作る</h4><p>左メニューの「認証情報」→ 画面上部の「＋認証情報を作成」→「APIキー」を選びます。表示されたキーをコピーしてください。</p><a class="toollink" href="https://developers.google.com/youtube/v3/getting-started" target="_blank" rel="noopener">YouTube Data API 公式</a></div></div>
+
+      <p>1日あたりの無料枠がかなり大きく設定されています。個人で企画リサーチに使う程度なら、まず超えません。</p>
+
+      <h3>STEP 2. .envファイルを作ってキーを入れる</h3>
+      <p>キーの置き場所も、自分で作らずAIに作ってもらいます。</p>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>.envファイルを作らせる</b>
+          <button class="copy" type="button">コピー</button>
         </div>
-        <h4>STEP 1. YouTube Data APIのキーを取得する</h4>
-        <p>Googleが無料で発行しています。<a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a>から取得します。</p>
-        <ol class="step-list">
-          <li><a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a>を開き、普段YouTubeで使っているGoogleアカウントでログインする</li>
-          <li>初回は利用規約の同意画面が出るので、同意して続行する</li>
-          <li>画面上部の<strong>「プロジェクトを選択」</strong>→<strong>「新しいプロジェクト」</strong>をクリック</li>
-          <li>プロジェクト名を入れて<strong>「作成」</strong>（名前は何でも構いません。「YouTube Research」など）</li>
-          <li>左メニューの<strong>「APIとサービス」</strong>→<strong>「ライブラリ」</strong>を開く</li>
-          <li>検索バーに <code>YouTube Data API v3</code> と入力して検索し、結果をクリック</li>
-          <li><strong>「有効にする」</strong>をクリック（数秒かかることがあります）</li>
-          <li>左メニューの<strong>「認証情報」</strong>→ 画面上部の<strong>「＋認証情報を作成」</strong>→<strong>「APIキー」</strong>を選ぶ</li>
-          <li>表示されたキーをコピーする</li>
-        </ol>
-        <h4>無料枠について</h4>
-        <p>1日あたりの無料枠がかなり大きく設定されています。個人で企画リサーチに使う程度なら、まず超えません。最新の割り当ては<a href="https://developers.google.com/youtube/v3/getting-started" target="_blank" rel="noopener">YouTube Data API 公式ドキュメント</a>で確認できます。</p>
-        <h4>STEP 2. .envファイルを作ってキーを入れる</h4>
-        <p>キーの置き場所も、自分で作らずAIに作ってもらいます。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">.envファイル作成プロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>YouTubeのAPIキーを取得したので、.envファイルを作ってください。</code></pre>
+        <pre>YouTubeのAPIキーを取得したので、.envファイルを作ってください。</pre>
+      </div>
+      <p>できあがったファイルを開いて、コピーしたAPIキーを貼り付けます。貼るだけです。</p>
+
+      <div class="note warn"><b>注意：</b>APIキーは銀行口座の暗証番号と同じ扱いにしてください。AIのチャット欄に直接貼らない。人に見せない。公開フォルダやSNSに置かない。画面共有や録画に映さない。もし漏れたら、Google Cloud Consoleでキーを再生成すれば古いキーは無効になります。</div>
+
+      <h3>STEP 3. リサーチを頼む</h3>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>伸びている競合動画を抽出する</b>
+          <button class="copy" type="button">コピー</button>
         </div>
-        <p>できあがったファイルを開いて、コピーしたAPIキーを貼り付けます。貼るだけです。</p>
-        <div class="note">
-          <strong>APIキーは銀行口座の暗証番号と同じ扱いにしてください。</strong>AIのチャット欄に直接貼らない。人に見せない。SNSや公開フォルダに置かない。画面共有や動画に映さない。もし漏れたら、Google Cloud Consoleでキーを再生成すれば古いキーは無効になります。
-        </div>
-        <h4>STEP 3. リサーチを頼む</h4>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">競合リサーチプロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>YouTube Data APIを使って、「AI 副業」で検索して、
+        <pre>YouTube Data APIを使って、「AI 副業」で検索して、
 直近1ヶ月の動画のうち、チャンネル登録者数の3倍以上再生されているものを、
-再生数の多い順に10本出してください。</code></pre>
-        </div>
-        <p><strong>なぜ「登録者数の3倍以上」なのか。</strong>再生数だけで並べると、大きいチャンネルばかりが出てきます。登録者10万人で10万回再生より、登録者1万人で10万回回っている動画のほうが、企画としては跳ねています。見るべきは再生数ではなく倍率です。</p>
-        <h4>STEP 4. 仮説と切り口まで出させる</h4>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">仮説・切り口の追加プロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>それぞれの動画について、なぜ伸びたと思うかの仮説と、
-僕のチャンネルで使うならどういう切り口になるかを追加してください。</code></pre>
-        </div>
-        <h4>STEP 5. 流れをスキルにして固定する</h4>
-        <p>ここが一番大事です。うまくいった流れは、毎回説明し直すのではなく固定します。</p>
-        <p>スキルは、AIに覚えさせる作業の手順書のようなものです。一度入れておくと、毎回説明しなくても同じ品質で動いてくれます。手順書も自分では書きません。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">スキル化プロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>これまでのやり取りを全部参照して、このタスクをスキル化してください。</code></pre>
-        </div>
-        <p>これで次からは「リサーチして」の一言で、同じものが出てきます。<strong>だからこそ、最初の1回で納得いくまで直しておくのが効きます。</strong></p>
-        <div class="note">
-          スキル化は、いきなりやらないでください。<strong>先にその作業を1回手で通す</strong>のが順番です。スキル化は良い流れを固定するための作業なので、固定する流れがまだ無い状態でやっても意味がありません。
-        </div>
-        <h4>検索キーワードを変えるだけで横展開できる</h4>
-        <p>作ったスキルは、検索キーワードを変えるだけで別ジャンルにも使えます。自分の領域のキーワードに差し替えてください。</p>
+再生数の多い順に10本出してください。</pre>
       </div>
-    </section>
-    <section id="sec6">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 06</div>
-        <h2 class="section-title">自動実行：毎朝、触らないで動かす</h2>
-      </div>
-      <div class="section-body">
-        <p>ここまでは話しかけたら動く状態でした。ここからは話しかけなくても動くようにします。頼み方は日本語のままです。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">定期実行の登録プロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>平日の朝7時に、未読メールの仕分けと今日の予定をまとめて、
-Slackに送ってください。</code></pre>
-        </div>
-        <p>裏では、時間が来たら決めた作業を起動するオートメーションという仕組みが動いています。デフォルトで搭載されているので、別途入れるものはありません。</p>
-        <h4>登録したら必ず1回テストする</h4>
-        <p>いきなり毎朝送られる状態にする前に、リハーサルを1回挟みます。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">ドライラン（リハーサル）プロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>本番と同じ流れで動かして、Slackには送らずに結果だけ見せてください。</code></pre>
-        </div>
-        <p>これがドライランと呼ばれるものです。出力を確認して問題なければ、そのまま本番運用に入れます。朝7時にセットしたら、絶対に7時に出勤してくれる秘書になります。</p>
-        <h4>1つだけ注意：パソコンが起きている必要があります</h4>
-        <p>この仕組みは自分のパソコンで動いているので、電源が切れていると動きません。スリープでも動きません。</p>
-        <p><strong>ただし2台目は不要です。</strong>スリープさせない設定にすれば1台で足ります。この設定も自分で調べる必要はありません。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">スリープ防止の設定プロンプト</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>パソコンを閉じてもPCをスリープさせない設定をしてください。</code></pre>
-        </div>
-        <p>OSごとの設定場所が違っても、AIが自分の環境に合わせて進めてくれます。</p>
-        <h4>運用パターン</h4>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>状況</th><th>おすすめの運用</th></tr></thead>
-            <tbody>
-              <tr><td>家にPCを置いて出られる</td><td>スリープさせない設定にして開いたままにする</td></tr>
-              <tr><td>PCを持ち歩く</td><td>朝の実行が終わってから閉じる</td></tr>
-              <tr><td>使っていない古いPCがある</td><td>それを置きっぱなしにするのが一番楽です</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+      <p><b>なぜ「登録者数の3倍以上」なのか。</b>再生数だけで並べると、大きいチャンネルばかりが出てきます。登録者10万人で10万回再生より、登録者1万人で10万回回っている動画のほうが、企画としては跳ねています。見るべきは再生数ではなく倍率です。</p>
 
-    <section id="sec7">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 07</div>
-        <h2 class="section-title">育て方：使うほど自分専用になる</h2>
-      </div>
-      <div class="section-body">
-        <p>普通のチャットは、新しい会話を始めると毎回イチから説明し直しになります。AI秘書はそこが変わります。</p>
-        <h4>やることは1つだけ</h4>
-        <p>やり取りの中で「これ覚えといて」と言うだけです。SECTION 02で作ったルールファイルに「大事なことはメモに残す」と書いてあるので、それが効きます。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">覚えさせるプロンプトの例</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>返信を作るときは、敬語とカジュアルの2パターンを出してください。
-これ覚えといて。</code></pre>
+      <h3>STEP 4. 仮説と切り口まで出させる</h3>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>なぜ伸びたかの仮説を足す</b>
+          <button class="copy" type="button">コピー</button>
         </div>
-        <p>フォルダの中にメモが作られます。次に返信を書かせると、何も言わなくても2パターン出てくるようになります。毎回頼まなくてよくなる、というのが育つということです。</p>
-        <h4>覚えさせると効くこと</h4>
-        <ul class="check-list">
-          <li>相手ごとの温度（この取引先は敬語、この人はカジュアル）</li>
-          <li>よく使う言い回し、避けたい表現</li>
-          <li>返信の型（結論から書く、箇条書きにする、など）</li>
-          <li>定例の予定や、毎月決まってやること</li>
-        </ul>
-        <h4>入れた情報は学習に使われる？</h4>
-        <p>設定で選べます。モデルの改善に使うかどうかの項目があるので、気になる方はオフにしてください。そのうえで、パスワードやAPIキーのような値は送らないルールにしておくのが安全です。</p>
-        <h4>最初から完璧を目指さない</h4>
-        <p>まず70点で作って、使いながら足りないところを足していくほうが早いです。動画で作ったものも70点です。ここから足していけば、どんどん自分専用になります。</p>
+        <pre>それぞれの動画について、なぜ伸びたと思うかの仮説と、
+僕のチャンネルで使うならどういう切り口になるかを追加してください。</pre>
       </div>
-    </section>
 
-    <section id="sec8">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 08</div>
-        <h2 class="section-title">権限とセキュリティの推奨設定</h2>
-      </div>
-      <div class="section-body">
-        <p>便利さより先に、安全側を決めておきます。自動で動くようになるほど、何かあったときの影響も大きくなるためです。</p>
-        <h4>操作ごとの推奨</h4>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>操作</th><th>推奨</th><th>理由</th></tr></thead>
-            <tbody>
-              <tr><td>メールを読む</td><td>常に許可</td><td>読むだけなら被害が出ません</td></tr>
-              <tr><td>下書きを作る</td><td>常に許可</td><td>下書きは送信されません</td></tr>
-              <tr><td><strong>メールを送信する</strong></td><td><strong>渡さない</strong></td><td>意図しない相手に届くと取り返しがつきません</td></tr>
-              <tr><td>予定を登録する</td><td>毎回確認</td><td>他の人を巻き込む招待が飛ぶことがあります</td></tr>
-              <tr><td>チャットに通知する</td><td>許可でOK</td><td>自分宛ての通知なら影響が閉じます</td></tr>
-              <tr><td>ファイルを削除する</td><td>渡さない</td><td>戻せません</td></tr>
-            </tbody>
-          </table>
+      <h3>STEP 5. 流れをスキルにして固定する</h3>
+      <p>ここが一番大事です。うまくいった流れは、毎回説明し直すのではなく固定します。スキルは、AIに覚えさせる作業の手順書のようなものです。一度入れておくと、毎回説明しなくても同じ品質で動いてくれます。手順書も自分では書きません。</p>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>この流れをスキルにする</b>
+          <button class="copy" type="button">コピー</button>
         </div>
-        <h4>秘密の値の扱い</h4>
-        <ul class="check-list">
-          <li>APIキー、パスワード、アクセストークンは<strong>チャット欄に貼らない</strong>（.envなどのファイルに置く）</li>
-          <li>画面共有・録画・配信のときは、キーが映る画面を開かない</li>
-          <li>公開フォルダやSNSに置かない</li>
-          <li>漏れた可能性があれば、発行元の管理画面で<strong>すぐ再生成</strong>する（古いキーは無効になります）</li>
-        </ul>
-        <h4>会社のアカウントで使う場合</h4>
-        <p>会社のGoogle Workspaceは、管理者側で外部アプリの接続が制限されていることがあります。まずは個人のアカウントで作って、動く状態を確認してから相談するほうが早いです。</p>
-        <div class="note">
-          考え方はシンプルです。<strong>送信は渡さない。自分以外には反応させない。何かあっても被害が出ない形にしておく。</strong>この3つを守っていれば、自動化を進めても怖くありません。
-        </div>
+        <pre>これまでのやり取りを全部参照して、このタスクをスキル化してください。</pre>
       </div>
-    </section>
+      <p>これで次からは「リサーチして」の一言で、同じものが出てきます。<b>だからこそ、最初の1回で納得いくまで直しておくのが効きます。</b></p>
 
-    <section id="sec9">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 09</div>
-        <h2 class="section-title">つまずいた時のチェックリスト</h2>
-      </div>
-      <div class="section-body">
-        <h4>症状別の対処</h4>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>症状</th><th>まず確認すること</th></tr></thead>
-            <tbody>
-              <tr><td>一覧にツールが出てこない</td><td>アプリを最新版に更新する。それでも出なければ、そのツールは一覧提供の対象外の可能性があります（SECTION 05のようにキー取得が必要）</td></tr>
-              <tr><td>認証画面でエラーになる</td><td>ブラウザで対象アカウントにログインしているか。別アカウントで開いていないか</td></tr>
-              <tr><td>接続したのにメールが読めない</td><td>接続時の許可画面で、読み取りにチェックが入っていたか。一度削除して繋ぎ直すと直ることが多いです</td></tr>
-              <tr><td>フォルダの中身を見てくれない</td><td>チャットで対象フォルダが選択されているか。別のフォルダを見ていないか</td></tr>
-              <tr><td>ルールファイルが守られない</td><td>長すぎる可能性があります。要点だけ残して、詳細は別ファイルに分ける</td></tr>
-              <tr><td>朝になっても動いていない</td><td>PCがスリープしていないか。電源が入っているか。アプリが起動しているか</td></tr>
-              <tr><td>APIキーが使えない</td><td>対象のAPIが「有効」になっているか。キーをコピーし損ねていないか（前後の空白に注意）</td></tr>
-              <tr><td>同じ品質で出てこない</td><td>スキル化できているか。できていれば、スキルの中身を直接直せます</td></tr>
-            </tbody>
-          </table>
+      <div class="note warn"><b>注意：</b>スキル化は、いきなりやらないでください。<b>先にその作業を1回手で通す</b>のが順番です。スキル化は良い流れを固定するための作業なので、固定する流れがまだ無い状態でやっても意味がありません。</div>
+    </div>
+  </section>
+  <section class="sec" id="s6">
+    <p class="sec-label rv">STEP 06</p>
+    <h2 class="sec-title rv">自動実行：毎朝、触らないで動かす</h2>
+    <p class="sec-lead rv">話しかけなくても動く状態にします。頼み方は日本語のままです。</p>
+
+    <div class="card rv">
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>毎朝の定期実行を登録する</b>
+          <button class="copy" type="button">コピー</button>
         </div>
-        <h4>それでも分からないとき</h4>
-        <p>一番早いのは、詰まっている画面をスクリーンショットに撮って、そのままAIに貼って聞くことです。環境ごとの差はAIが埋めてくれます。</p>
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <div class="prompt-title">困ったときの聞き方テンプレート</div>
-            <button class="copy-btn" type="button">コピー</button>
-          </div>
-<pre><code>今こういうことをやろうとしています：（やりたいこと）
+        <pre>平日の朝7時に、未読メールの仕分けと今日の予定をまとめて、
+Slackに送ってください。</pre>
+      </div>
+      <p>裏では、時間が来たら決めた作業を起動するオートメーションという仕組みが動いています。デフォルトで搭載されているので、別途入れるものはありません。</p>
+
+      <h3>登録したら必ず1回テストする</h3>
+      <p>いきなり毎朝送られる状態にする前に、リハーサルを1回挟みます。</p>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>ドライラン（本番と同じ流れで送らずに確認）</b>
+          <button class="copy" type="button">コピー</button>
+        </div>
+        <pre>本番と同じ流れで動かして、Slackには送らずに結果だけ見せてください。</pre>
+      </div>
+      <p>出力を確認して問題なければ、そのまま本番運用に入れます。朝7時にセットしたら、絶対に7時に出勤してくれる秘書になります。</p>
+
+      <h3>1つだけ注意：パソコンが起きている必要があります</h3>
+      <p>この仕組みは自分のパソコンで動いているので、電源が切れていると動きません。スリープでも動きません。<b>ただし2台目は不要です。</b>スリープさせない設定にすれば1台で足ります。この設定も自分で調べる必要はありません。</p>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>スリープを止める設定をAIにやらせる</b>
+          <button class="copy" type="button">コピー</button>
+        </div>
+        <pre>パソコンを閉じてもPCをスリープさせない設定をしてください。</pre>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>状況</th><th>おすすめの運用</th></tr></thead>
+          <tbody>
+            <tr><td>家にPCを置いて出られる</td><td>スリープさせない設定にして開いたままにする</td></tr>
+            <tr><td>PCを持ち歩く</td><td>朝の実行が終わってから閉じる</td></tr>
+            <tr><td>使っていない古いPCがある</td><td>それを置きっぱなしにするのが一番楽です</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s7">
+    <p class="sec-label rv">STEP 07</p>
+    <h2 class="sec-title rv">育て方：使うほど自分専用になる</h2>
+    <p class="sec-lead rv">普通のチャットとの一番の違いがここです。</p>
+
+    <div class="card rv">
+      <p>普通のチャットは、新しい会話を始めると毎回イチから説明し直しになります。AI秘書はそこが変わります。</p>
+
+
+      <h3>やることは1つだけ</h3>
+      <p>やり取りの中で「これ覚えといて」と言うだけです。STEP 02で作ったルールファイルに「大事なことはメモに残す」と書いてあるので、それが効きます。</p>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>覚えさせる（例：返信を2パターン出させる）</b>
+          <button class="copy" type="button">コピー</button>
+        </div>
+        <pre>返信を作るときは、敬語とカジュアルの2パターンを出してください。
+これ覚えといて。</pre>
+      </div>
+      <p>フォルダの中にメモが作られます。次に返信を書かせると、何も言わなくても2パターン出てくるようになります。毎回頼まなくてよくなる、というのが育つということです。</p>
+
+      <h3>覚えさせると効くこと</h3>
+      <div class="grid">
+        <div class="grid-item tilt"><span class="tag">文体</span><h4>相手ごとの温度</h4><p>この取引先は敬語、この人はカジュアル、という使い分け。</p></div>
+        <div class="grid-item tilt"><span class="tag">表現</span><h4>言い回しの好み</h4><p>よく使う言い方と、避けたい表現。</p></div>
+        <div class="grid-item tilt"><span class="tag">型</span><h4>返信の組み立て</h4><p>結論から書く、箇条書きにする、などの型。</p></div>
+        <div class="grid-item tilt"><span class="tag">予定</span><h4>定例と繰り返し</h4><p>毎週の打ち合わせ、毎月決まってやること。</p></div>
+      </div>
+
+      <h3>入れた情報は学習に使われる？</h3>
+      <p>設定で選べます。モデルの改善に使うかどうかの項目があるので、気になる方はオフにしてください。そのうえで、パスワードやAPIキーのような値は送らないルールにしておくのが安全です。</p>
+
+      <div class="note"><b>ポイント：</b>最初から完璧を目指さなくていいです。まず70点で作って、使いながら足りないところを足していくほうが早いです。</div>
+    </div>
+  </section>
+
+  <section class="sec" id="s8">
+    <p class="sec-label rv">STEP 08</p>
+    <h2 class="sec-title rv">権限とセキュリティの推奨設定</h2>
+    <p class="sec-lead rv">便利さより先に、安全側を決めておきます。</p>
+
+    <div class="card rv">
+      <p>自動で動くようになるほど、何かあったときの影響も大きくなります。先に線を引いておけば、あとは安心して任せられます。</p>
+
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>操作</th><th>推奨</th><th>理由</th></tr></thead>
+          <tbody>
+            <tr><td>メールを読む</td><td>常に許可</td><td>読むだけなら被害が出ません</td></tr>
+            <tr><td>下書きを作る</td><td>常に許可</td><td>下書きは送信されません</td></tr>
+            <tr><td><b>メールを送信する</b></td><td><b>渡さない</b></td><td>意図しない相手に届くと取り返しがつきません</td></tr>
+            <tr><td>予定を登録する</td><td>毎回確認</td><td>他の人を巻き込む招待が飛ぶことがあります</td></tr>
+            <tr><td>チャットに通知する</td><td>許可でOK</td><td>自分宛ての通知なら影響が閉じます</td></tr>
+            <tr><td>ファイルを削除する</td><td>渡さない</td><td>戻せません</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>秘密の値の扱い</h3>
+      <ul class="check">
+        <li>APIキー、パスワード、アクセストークンはチャット欄に貼らない（.envなどのファイルに置く）</li>
+        <li>画面共有・録画・配信のときは、キーが映る画面を開かない</li>
+        <li>公開フォルダやSNSに置かない</li>
+        <li>漏れた可能性があれば、発行元の管理画面ですぐ再生成する（古いキーは無効になります）</li>
+      </ul>
+
+      <h3>会社のアカウントで使う場合</h3>
+      <p>会社のGoogle Workspaceは、管理者側で外部アプリの接続が制限されていることがあります。まずは個人のアカウントで作って、動く状態を確認してから相談するほうが早いです。</p>
+
+      <ol class="takeaway">
+        <li><b>送信は渡さない</b><span>取り返しがつかない操作だけを外します</span></li>
+        <li><b>自分以外には反応させない</b><span>指示の中で明示しておきます</span></li>
+        <li><b>何かあっても被害が出ない形にする</b><span>この3つを守れば自動化を進めても怖くありません</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="s9">
+    <p class="sec-label rv">STEP 09</p>
+    <h2 class="sec-title rv">詰まった時のチェックリスト</h2>
+    <p class="sec-lead rv">よくある症状と、まず確認するところをまとめました。</p>
+
+    <div class="card rv">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>症状</th><th>まず確認すること</th></tr></thead>
+          <tbody>
+            <tr><td>一覧にツールが出てこない</td><td>アプリを最新版に更新する。それでも出なければ、一覧提供の対象外の可能性があります（STEP 05のようにキー取得が必要）</td></tr>
+            <tr><td>認証画面でエラーになる</td><td>ブラウザで対象アカウントにログインしているか。別アカウントで開いていないか</td></tr>
+            <tr><td>接続したのにメールが読めない</td><td>接続時の許可画面で読み取りにチェックが入っていたか。一度削除して繋ぎ直すと直ることが多いです</td></tr>
+            <tr><td>フォルダの中身を見てくれない</td><td>チャットで対象フォルダが選択されているか</td></tr>
+            <tr><td>ルールファイルが守られない</td><td>長すぎる可能性があります。要点だけ残して詳細は別ファイルに分ける</td></tr>
+            <tr><td>朝になっても動いていない</td><td>PCがスリープしていないか。電源が入っているか。アプリが起動しているか</td></tr>
+            <tr><td>APIキーが使えない</td><td>対象のAPIが「有効」になっているか。キーの前後に空白が入っていないか</td></tr>
+            <tr><td>同じ品質で出てこない</td><td>スキル化できているか。できていればスキルの中身を直接直せます</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>それでも分からないとき</h3>
+      <div class="prompt">
+        <div class="prompt-head">
+          <b>困った時の聞き方テンプレート</b>
+          <button class="copy" type="button">コピー</button>
+        </div>
+        <pre>今こういうことをやろうとしています：（やりたいこと）
 この画面でこうなって進めません：（スクリーンショットを添付）
-何を確認すればいいか、順番に教えてください。</code></pre>
-        </div>
-        <h4>着手前のチェック</h4>
-        <ul class="check-list">
-          <li>AI秘書専用のフォルダを作り、チャットで選択している</li>
-          <li>ルールファイル（CLAUDE.md / AGENTS.md）ができている</li>
-          <li>Gmail・カレンダーが接続済みになっている</li>
-          <li>送信権限は渡していない</li>
-          <li>APIキーはファイルに置き、チャットに貼っていない</li>
-          <li>自動実行はドライランで1回確認してから本番にした</li>
-        </ul>
+何を確認すればいいか、順番に教えてください。</pre>
       </div>
-    </section>
 
-    <section id="sec10">
-      <div class="section-header">
-        <div class="section-kicker">SECTION 10</div>
-        <h2 class="section-title">次に足していく仕事のアイデア</h2>
+      <h3>今日やることチェックリスト</h3>
+      <ul class="check">
+        <li>AI秘書専用のフォルダを作り、チャットで選択した</li>
+        <li>ルールファイル（CLAUDE.md / AGENTS.md）を作った</li>
+        <li>Gmailとカレンダーを接続した</li>
+        <li>メールの仕分けを1回動かした</li>
+        <li>送信権限は渡していない</li>
+        <li>APIキーはファイルに置き、チャットに貼っていない</li>
+        <li>自動実行はドライランで確認してから本番にした</li>
+      </ul>
+
+      <h3>次に足していく仕事</h3>
+      <div class="grid">
+        <div class="grid-item tilt"><span class="tag">夕方</span><h4>進捗まとめ</h4><p>その日届いたメールと明日の予定を17時に通知させる。</p></div>
+        <div class="grid-item tilt"><span class="tag">予定</span><h4>ダブルブッキング防止</h4><p>登録前にカレンダーを確認させ、重複を知らせる。</p></div>
+        <div class="grid-item tilt"><span class="tag">記録</span><h4>議事録の保存</h4><p>文字起こしを要約し、決定事項とタスクだけ残す。</p></div>
+        <div class="grid-item tilt"><span class="tag">定期</span><h4>週次リサーチ便</h4><p>STEP 05のスキルを毎週月曜に自動実行する。</p></div>
       </div>
-      <div class="section-body">
-        <p>ここまでで土台はできています。あとは自分の面倒くさい仕事を1つずつ渡していくだけです。</p>
-        <div class="grid three">
-          <div class="mini-card">
-            <strong>夕方の進捗まとめ</strong>
-            <p>その日に届いたメールと、明日の予定を17時にまとめて通知させる。</p>
-          </div>
-          <div class="mini-card">
-            <strong>ダブルブッキング防止</strong>
-            <p>予定を登録する前にカレンダーを確認させ、重複があれば知らせる。</p>
-          </div>
-          <div class="mini-card">
-            <strong>議事録の保存</strong>
-            <p>打ち合わせの文字起こしを要約して、決定事項とタスクだけ残す。</p>
-          </div>
-          <div class="mini-card">
-            <strong>週次リサーチ便</strong>
-            <p>SECTION 05のスキルを毎週月曜に自動実行して、結果を通知させる。</p>
-          </div>
-          <div class="mini-card">
-            <strong>請求・支払いの確認</strong>
-            <p>決まった件名のメールを拾って、対応が必要なものだけ知らせる。</p>
-          </div>
-          <div class="mini-card">
-            <strong>人物メモの蓄積</strong>
-            <p>やり取りした相手の情報を、フォルダ内に少しずつ貯めていく。</p>
-          </div>
-        </div>
-        <h4>足すときの順番</h4>
-        <ol class="step-list">
-          <li>まず手で1回やって、AIに同じことを手動で頼んでみる</li>
-          <li>出力に納得できるまで、その場で直しを入れる</li>
-          <li>納得できたらスキル化して固定する</li>
-          <li>必要なら定期実行に載せる（ドライランを忘れずに）</li>
-        </ol>
-        <div class="note">
-          この順番を守るだけで、うまくいく確率がかなり上がります。逆に、いきなりスキル化や自動実行から入ると、何が悪いのか分からなくなります。
-        </div>
+
+      <div class="note warn"><b>注意：</b>足すときの順番を守ってください。まず手で1回やる → 納得いくまで直す → スキル化する → 定期実行に載せる。いきなりスキル化や自動実行から入ると、何が悪いのか分からなくなります。</div>
+    </div>
+  </section>
+
+  <section class="closing rv">
+    <div class="closing-inner">
+      <h2>作った秘書に、次の仕事を渡していく</h2>
+      <p>ここまでで土台はできています。あとは自分の面倒くさい仕事を1つずつ渡していくだけです。実際に運用していく中での改善や、最新のAI活用の情報は、公式LINEから参加できるコミュニティで配信しています。</p>
+
+      <div class="bonus">
+        <div><b>12</b><span>コミュニティ参加特典</span></div>
+        <div><b>20</b><span>セミナー参加特典</span></div>
+        <div><b>42</b><span>受け取れる特典の合計</span></div>
       </div>
-    </section>
 
-    <section class="cta">
-      <h2>使い方はシンプルです</h2>
-      <p>まずAI秘書用のフォルダを1つ作って、GmailとカレンダーだけMCPで繋いでください。そこからメールの仕分けを1回動かせば、あとは足していくだけです。最初から完璧を目指さず、70点で動かしながら育てていくのが一番早い進め方です。</p>
-    </section>
-  </div>
+      <p>公式LINEから参加できる <b>AI×SNS攻略 月額0円コミュニティ</b> では、追加12大特典に加えて、最新のAI×マーケティング情報を僕がキャッチアップして配信しています。</p>
+      <p>さらに、累計3,000名以上が参加した『AI駆動型コンテンツビジネス 0→100完全攻略セミナー』にも完全無料でご招待しています。参加するだけで豪華20大特典がもらえます。案内はどちらも公式LINEから届きます。</p>
 
-  <button class="back-to-top" type="button" aria-label="ページ上部へ戻る">↑</button>
-  <script>
-    document.body.classList.add("motion-ready");
+      <a class="btn" href="#s1">もう一度、手順の先頭から見る</a>
+    </div>
+  </section>
 
-    document.querySelectorAll(".hero-meta span").forEach((item, index) => {
-      item.style.setProperty("--i", index);
-    });
+  <p class="foot">星川ユウヤ</p>
+</div>
+<button class="totop" id="totop" type="button" aria-label="ページ上部へ戻る">↑</button>
 
-    const buttons = document.querySelectorAll(".copy-btn");
-    buttons.forEach((button) => {
-      button.addEventListener("click", async () => {
-        const card = button.closest(".prompt-card");
-        const code = card ? card.querySelector("code") : null;
-        if (!code) return;
-        const text = code.innerText;
-        try {
-          await navigator.clipboard.writeText(text);
-          const original = button.textContent;
-          button.textContent = "コピー済み";
-          button.classList.add("copied");
-          setTimeout(() => {
-            button.textContent = original;
-            button.classList.remove("copied");
-          }, 1400);
-        } catch (error) {
-          button.textContent = "選択してコピー";
-        }
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* [C:進捗バー] + [C:トップへ戻る] */
+  var bar = document.getElementById('bar');
+  var totop = document.getElementById('totop');
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    if (bar) bar.style.width = p + '%';
+    if (totop) totop.classList.toggle('show', h.scrollTop > 640);
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  if (totop) totop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior: reduce ? 'auto' : 'smooth'});
+  });
+
+  /* [C:出現アニメーション] 画面に入ったらふわっと表示 */
+  var rv = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -12% 0px', threshold:0});  /* threshold>0だと、ビューポートの十数倍の高さの要素（長文プロンプトのカード等）で一生発火せず透明のまま章が消える（2026-08-20 No.12で実発生: 19,267pxのカードは最大でも3.7%しか見えない） */
+    rv.forEach(function(el){ io.observe(el); });
+  } else {
+    rv.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* [C:目次] + [C:サイド進捗ナビ] 現在地ハイライト */
+  var secs = Array.prototype.slice.call(document.querySelectorAll('section.sec[id]'));
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.sidenav a'));
+  if (secs.length && 'IntersectionObserver' in window){
+    var spy = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var id = '#' + e.target.id;
+        tocLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === id); });
+        navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === id); });
       });
-    });
+    }, {rootMargin:'-45% 0px -45% 0px'});
+    secs.forEach(function(s){ spy.observe(s); });
+  }
 
-    const progressFill = document.querySelector(".scroll-progress span");
-    const backToTop = document.querySelector(".back-to-top");
-    const hero = document.querySelector(".hero");
-    const sections = Array.from(document.querySelectorAll("section[id^='sec']"));
-    const tocLinks = Array.from(document.querySelectorAll(".toc-list a"));
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const sectionRail = document.createElement("nav");
-    sectionRail.className = "section-rail";
-    sectionRail.setAttribute("aria-label", "セクションナビゲーション");
-    sectionRail.innerHTML = sections.map((section, index) => {
-      const title = section.querySelector(".section-title")?.innerText || `SECTION ${index + 1}`;
-      return `<a href="#${section.id}" aria-label="${title}"></a>`;
-    }).join("");
-    document.body.appendChild(sectionRail);
-    const railLinks = Array.from(sectionRail.querySelectorAll("a"));
-
-    const updateScrollState = () => {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-      const progress = Math.min(Math.max(scrollTop / maxScroll, 0), 1);
-
-      if (progressFill) {
-        progressFill.style.width = `${progress * 100}%`;
+  /* [C:プロンプト枠] コピーボタン */
+  document.querySelectorAll('.prompt .copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.closest('.prompt').querySelector('pre');
+      if(!pre) return;
+      var text = pre.innerText;
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'コピーしました';
+        btn.classList.add('done');
+        setTimeout(function(){ btn.textContent = old; btn.classList.remove('done'); }, 1600);
+      };
+      if (navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly','');
+        ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch(e){}
+        document.body.removeChild(ta);
       }
+    });
+  });
 
-      if (backToTop) {
-        backToTop.classList.toggle("is-visible", scrollTop > 700);
-      }
+  if (reduce) return;
 
-      sectionRail.classList.toggle("is-visible", scrollTop > 700);
+  /* [C:ヒーロー] マウス追従の光。触っていない時は中央 */
+  var hero = document.getElementById('hero');
+  var glow = document.getElementById('glow');
+  if (hero && glow){
+    hero.addEventListener('pointermove', function(ev){
+      var r = hero.getBoundingClientRect();
+      glow.style.setProperty('--mx', ((ev.clientX - r.left) / r.width * 100) + '%');
+      glow.style.setProperty('--my', ((ev.clientY - r.top) / r.height * 100) + '%');
+    });
+  }
 
-      let currentId = "";
-      sections.forEach((section) => {
-        const top = section.getBoundingClientRect().top;
-        if (top <= 160) {
-          currentId = section.id;
-        }
+  /* [C:3Dホバーカード] 指で触る端末では無効（横スクロールを出さないため） */
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches){
+    document.querySelectorAll('.tilt').forEach(function(el){
+      el.addEventListener('pointermove', function(ev){
+        var r = el.getBoundingClientRect();
+        var rx = ((ev.clientY - r.top) / r.height - .5) * -5;
+        var ry = ((ev.clientX - r.left) / r.width - .5) * 5;
+        el.style.transform = 'perspective(760px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-3px)';
       });
-
-      tocLinks.forEach((link) => {
-        link.classList.toggle("is-active", link.getAttribute("href") === `#${currentId}`);
-      });
-
-      railLinks.forEach((link) => {
-        link.classList.toggle("is-active", link.getAttribute("href") === `#${currentId}`);
-      });
-    };
-
-    const revealTargets = document.querySelectorAll(".hero, .intro, .toc, .section-header, .content-card, .cta");
-
-    if (prefersReducedMotion) {
-      revealTargets.forEach((target) => target.classList.add("is-visible"));
-    } else {
-      revealTargets.forEach((target) => target.classList.add("reveal"));
-      const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
-
-      revealTargets.forEach((target) => revealObserver.observe(target));
-    }
-
-    if (hero && !prefersReducedMotion) {
-      hero.addEventListener("pointermove", (event) => {
-        const rect = hero.getBoundingClientRect();
-        const x = ((event.clientX - rect.left) / rect.width) * 100;
-        const y = ((event.clientY - rect.top) / rect.height) * 100;
-        hero.style.setProperty("--mx", `${x}%`);
-        hero.style.setProperty("--my", `${y}%`);
-      });
-    }
-
-    const tiltTargets = document.querySelectorAll(".mini-card, .flow-item, .prompt-card");
-
-    if (!prefersReducedMotion && window.matchMedia("(hover: hover)").matches) {
-      tiltTargets.forEach((target) => {
-        target.classList.add("tilt-card");
-
-        target.addEventListener("pointermove", (event) => {
-          const rect = target.getBoundingClientRect();
-          const relX = (event.clientX - rect.left) / rect.width;
-          const relY = (event.clientY - rect.top) / rect.height;
-          const rotateY = (relX - 0.5) * 7;
-          const rotateX = (0.5 - relY) * 7;
-
-          target.style.setProperty("--rx", `${rotateX.toFixed(2)}deg`);
-          target.style.setProperty("--ry", `${rotateY.toFixed(2)}deg`);
-          target.style.setProperty("--lift", "-2px");
-          target.style.setProperty("--glare", "1");
-          target.style.setProperty("--gx", `${(relX * 160 - 80).toFixed(1)}%`);
-        });
-
-        target.addEventListener("pointerleave", () => {
-          target.style.setProperty("--rx", "0deg");
-          target.style.setProperty("--ry", "0deg");
-          target.style.setProperty("--lift", "0px");
-          target.style.setProperty("--glare", "0");
-          target.style.setProperty("--gx", "-120%");
-        });
-      });
-    }
-
-    if (backToTop) {
-      backToTop.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
-      });
-    }
-
-    updateScrollState();
-    window.addEventListener("scroll", updateScrollState, { passive: true });
-    window.addEventListener("resize", updateScrollState);
-  </script>
+      el.addEventListener('pointerleave', function(){ el.style.transform = ''; });
+    });
+  }
+})();
+</script>
 </body>
 </html>
